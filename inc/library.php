@@ -81,7 +81,7 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                 switch ($d) {
                     case 0:
                         /*display input fields*/
-                        if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'sbp_tab') {
+                        if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'awm_tab') {
                             if ($b != 4) {
                                 $ins .= '<label for="'.$original_meta_id.'"><span>'.$label.'</span></label>';
                             }
@@ -109,9 +109,9 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                 $ins = '<a href="'.$link.'" id="'.$n.'" title="'.$a['label'].'" class="'.$class.'" '.$extraa.'>'.$a['label'].'</a>';
                                 break;
                             case 'input':
-                                $label_class[] = 'cls33';
+                                $label_class[] = 'awm-cls-33';
                                 $input_type = $a['type'];
-                                $after_message = (isset($a['after_message']) && !empty($a['after_message'])) ? '<span class="sbp-after-message">'.$a['after_message'].'</span>' : '';
+                                $after_message = (isset($a['after_message']) && !empty($a['after_message'])) ? '<span class="awm-after-message">'.$a['after_message'].'</span>' : '';
                                 switch ($a['type']) {
                                     case 'number':
                                         $val = (int) $val;
@@ -139,7 +139,7 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                     if (is_array($val) && in_array($dlm, $val)) {
                                         $chk_ex = ' checked';
                                     }
-                                    $ins .= '<div class="sbp-multiple-checkbox"><div class="insider"><input type="checkbox" name="'.$original_meta.'[]" id="'.$original_meta_id.'_'.$dlm.'" value="'.$dlm.'" '.$extraa.$chk_ex.' class="'.$class.'"/><label for="'.$original_meta_id.'_'.$dlm.'"><span>'.$dlmm['label'].'</span></label></div></div>';
+                                    $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><input type="checkbox" name="'.$original_meta.'[]" id="'.$original_meta_id.'_'.$dlm.'" value="'.$dlm.'" '.$extraa.$chk_ex.' class="'.$class.'"/><label for="'.$original_meta_id.'_'.$dlm.'"><span>'.$dlmm['label'].'</span></label></div></div>';
                                 }
                                 $n = $n.'[]';
                                 break;
@@ -148,7 +148,7 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                     $val = array($val);
                                 }
                                 $select_name = $original_meta;
-                                $label_class[] = 'cls33';
+                                $label_class[] = 'awm-cls-33';
                                 if (isset($a['attributes']) && array_key_exists('multiple', $a['attributes']) && $a['attributes']['multiple']) {
                                     $select_name .= '[]';
                                 }
@@ -177,17 +177,17 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                 break;
                             case 'image':
                                 $multiple = isset($a['multiple']) ? $a['multiple'] : false;
-                                $ins .= sbp_custom_image_image_uploader_field($original_meta, $original_meta_id, $val, $multiple, $required);
-                                $label_class[] = 'sbp-custom-image-meta';
-                                $label_class[] = 'cls33';
+                                $ins .= awm_custom_image_image_uploader_field($original_meta, $original_meta_id, $val, $multiple, $required);
+                                $label_class[] = 'awm-custom-image-meta';
+                                $label_class[] = 'awm-cls-33';
                                 break;
                             case 'textarea':
-                                $label_class[] = 'cls100';
+                                $label_class[] = 'awm-cls-100';
                                 if (isset($a['wp_editor']) && $a['wp_editor']) {
                                     ob_start();
                                     wp_editor($val, $original_meta_id, array('textarea_name' => $original_meta, 'editor_class' => $class));
                                     $ins .= ob_get_clean();
-                                    $label_class[] = 'sbp-wp-editor';
+                                    $label_class[] = 'awm-wp-editor';
                                 } else {
                                     $ins .= '<textarea rows="5" name="'.$original_meta.'" id="'.$original_meta_id.'" '.$extra_string.' class="'.$class.'" '.$required.'>'.$val.'</textarea>';
                                 }
@@ -198,12 +198,12 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                     if ($vkey == $val) {
                                         $chk = 'checked="checked"';
                                     }
-                                    $ins .= '<label class="sbp-radio-options"><input type="radio" name="'.$original_meta.'" id="'.$original_meta_id.'" value="'.$vkey.'" '.$chk.' '.$required.'/><span class="sbp-radio-label">'.$valll['label'].'</span></label>';
+                                    $ins .= '<label class="awm-radio-options"><input type="radio" name="'.$original_meta.'" id="'.$original_meta_id.'" value="'.$vkey.'" '.$chk.' '.$required.'/><span class="awm-radio-label">'.$valll['label'].'</span></label>';
                                 }
                                 break;
                             case 'section':
-                                $label_class[] = 'sbp-section-field';
-                                $ins .= '<div class="sbp-inner-section"><div class="sbp-inner-section-content">';
+                                $label_class[] = 'awm-section-field';
+                                $ins .= '<div class="awm-inner-section"><div class="awm-inner-section-content">';
                                 foreach ($a['include'] as $key => $data) {
                                     $inputname = $original_meta_id.'['.$key.']';
                                     $data['attributes']['id'] = $original_meta_id.'_'.$key;
@@ -215,19 +215,20 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
 
                                 break;
                             case 'sbp_tab':
-                                if (isset($a['sbp_tabs']) && !empty($a['sbp_tabs'])) {
+                                if (isset($a['awm_tabs']) && !empty($a['awm_tabs'])) {
                                     $main_tab_id = $original_meta;
                                     $tabs = '';
                                     $tab_contents = '';
-                                    $ins .= '<div class="sbp-tab-wrapper">';
-                                    $ins .= '<div class="sbp-tab-wrapper-title">'.$a['label'].'</div>';
+                                    $ins .= '<div class="awm-tab-wrapper">';
+                                    $ins .= '<div class="awm-tab-wrapper-title">'.$a['label'].'</div>';
                                     $first_visit = 0;
                                     $val = !empty($val) ? $val : array();
-                                    foreach ($a['sbp_tabs'] as $tab_id => $tab_intro) {
+                                    foreach ($a['awm_tabs'] as $tab_id => $tab_intro) {
                                         ++$first_visit;
-                                        $show = $first_visit == 1 ? 'sbp-tab-show' : '';
-                                        $tabs .= '<div id="'.$tab_id.'_tab" class="sbp_tablinks '.$show.'" onclick="sbp_open_tab(event,\' '.$tab_id.'\')">'.$tab_intro['label'].'</div>';
-                                        $tab_contents .= '<div id="'.$tab_id.'_content_tab" class="sbp_tabcontent">';
+                                        $show = $first_visit == 1 ? 'awm-tab-show active' : '';
+                                        $style = $first_visit == 1 ? 'style="display: block;"' : '';
+                                        $tabs .= '<div id="'.$tab_id.'_tab" class="awm_tablinks '.$show.'" onclick="awm_open_tab(event,\' '.$tab_id.'\')">'.$tab_intro['label'].'</div>';
+                                        $tab_contents .= '<div id="'.$tab_id.'_content_tab" class="awm_tabcontent" '.$style.'>';
 
                                         foreach ($tab_intro['include'] as $key => $data) {
                                             $inputname = $main_tab_id.'['.$tab_id.']['.$key.']';
@@ -241,21 +242,21 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                         }
                                         $tab_contents .= '</div>';
                                     }
-                                    $ins .= '<div class="sbp-tab">'.$tabs.'</div>'.$tab_contents;
+                                    $ins .= '<div class="awm-tab">'.$tabs.'</div>'.$tab_contents;
                                     $ins .= '</div>';
                                 }
 
                                 break;
 
                             case 'map':
-                                $label_class[] = 'cls100';
+                                $label_class[] = 'awm-cls-100';
                                 $lat = (isset($val['lat']) && !empty($val['lat'])) ? $val['lat'] : '';
                                 $lng = (isset($val['lng']) && !empty($val['lng'])) ? $val['lng'] : '';
                                 $address = (isset($val['address']) && !empty($val['address'])) ? $val['address'] : '';
-                                $ins .= '<input id="sbp_map'.$original_meta_id.'_search_box" class="controls" type="text" placeholder="'.$a['label'].'" value="'.$address.'" '.$required.'><div class="sbp_map" id="sbp_map'.$original_meta_id.'"></div>';
-                                $ins .= '<input type="hidden" name="'.$original_meta.'[lat]" id="sbp_map'.$original_meta_id.'_lat" value="'.$lat.'" />';
-                                $ins .= '<input type="hidden" name="'.$original_meta.'[lng]" id="sbp_map'.$original_meta_id.'_lng" value="'.$lng.'" />';
-                                $ins .= '<input type="hidden" name="'.$original_meta.'[address]" id="sbp_map'.$original_meta_id.'_address" value="'.$address.'" />';
+                                $ins .= '<input id="awm_map'.$original_meta_id.'_search_box" class="controls" type="text" placeholder="'.$a['label'].'" value="'.$address.'" '.$required.'><div class="awm_map" id="awm_map'.$original_meta_id.'"></div>';
+                                $ins .= '<input type="hidden" name="'.$original_meta.'[lat]" id="awm_map'.$original_meta_id.'_lat" value="'.$lat.'" />';
+                                $ins .= '<input type="hidden" name="'.$original_meta.'[lng]" id="awm_map'.$original_meta_id.'_lng" value="'.$lng.'" />';
+                                $ins .= '<input type="hidden" name="'.$original_meta.'[address]" id="awm_map'.$original_meta_id.'_address" value="'.$address.'" />';
                                 break;
                             case 'repeater':
                                 if (!empty($a['include'])) {
@@ -471,7 +472,7 @@ function awm_custom_meta_update_vars($meta, $metaa, $id, $u)
     return $arr;
 }
 
-function sbp_custom_image_image_uploader_field($name, $id, $value = '', $multiple = false, $required = '')
+function awm_custom_image_image_uploader_field($name, $id, $value = '', $multiple = false, $required = '')
 {
     $image = ' button">'.sbp_Upload_image;
     $image_size = 'full'; // it would be better to use thumbnail size here (150x150 or so)
@@ -482,9 +483,23 @@ function sbp_custom_image_image_uploader_field($name, $id, $value = '', $multipl
         $display = 'inline-block';
     }
 
-    return '<div class="sbp-image-upload" id="sbp_image'.$id.'"data-multiple="'.$multiple.'" data-add_label="'.sbp_Insert_image.'" data-remove_label="'.sbp_Remove_images.'">
-		<a href="#" class="sbp_custom_image_upload_image_button'.$image.'</a>
+    return '<div class="awm-image-upload" id="awm_image'.$id.'"data-multiple="'.$multiple.'" data-add_label="'.sbp_Insert_image.'" data-remove_label="'.sbp_Remove_images.'">
+		<a href="#" class="awm_custom_image_upload_image_button'.$image.'</a>
 		<input type="hidden" name="'.$name.'" id="'.$id.'" value="'.$value.'" '.$required.'/>
-		<a href="#" class="sbp_custom_image_remove_image_button" style="display:inline-block;display:'.$display.'">Remove image</a>
+		<a href="#" class="awm_custom_image_remove_image_button" style="display:inline-block;display:'.$display.'">Remove image</a>
 	</div>';
 }
+
+add_action('wp_loaded', function () {
+    wp_register_style('awm-global-style', awm_url.'assets/css/global/awm-global-style.min.css', false, '1.0.0');
+    wp_register_style('awm-admin-style', awm_url.'assets/css/admin/awm-admin-style.min.css', false, '1.0.0');
+    wp_register_script('awm-global-script', awm_url.'assets/js/global/awm-global-script.js', array(), false, true);
+    wp_localize_script('awm-global-script', 'awmGlobals', array('url' => esc_url(site_url())));
+
+    wp_register_script('awm-admin-script', awm_url.'assets/js/admin/awm-admin-script.js', array(), false, true);
+}, 10, 1);
+
+add_action('enqueue_scripts', function () {
+    wp_enqueue_style('awm-global-style');
+    wp_enqueue_script('awm-global-script');
+}, 10, 1);
