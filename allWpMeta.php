@@ -15,8 +15,10 @@ if (!defined('WPINC')) {
     die;
 }
 
-add_action('plugins_loaded', 'all_wp_meta');
-function filox_advanced_search_plugin_load_textdomain()
+add_action('plugins_loaded', 'all_wp_meta_load_textdomain');
+function all_wp_meta_load_textdomain()
 {
     load_plugin_textdomain('all-wp-meta', false, dirname(plugin_basename(__FILE__)).'/languages/');
 }
+
+require_once 'inc/main.php';
