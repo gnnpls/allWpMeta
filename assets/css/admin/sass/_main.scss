@@ -1,0 +1,155 @@
+.sbp-meta-field {
+ display: inline-block;
+ vertical-align: top;
+ position: relative;
+
+ &.sbp-section-field {
+  border-bottom: solid 1px !important;
+
+  .sbp-meta-field {
+   border: none;
+  }
+ }
+
+ .sbp-after-message {
+  padding: 0px 4px;
+  font-size: 95%;
+ }
+
+ .sbp-tippy-admin-message {
+  position: absolute;
+  top: 6px;
+  right: 0px;
+  z-index: 100;
+  display: block !important;
+  float: right;
+  width: auto !important;
+
+  .sbp_icon {
+   cursor: pointer;
+   float: right;
+   font-size: 21px;
+
+   &:hover {
+    opacity: 0.7;
+   }
+  }
+ }
+
+ label {
+  text-align: left;
+  font-weight: 500;
+ }
+
+ input[type="checkbox"] {
+  height: 18px !important;
+  width: 18px !important;
+  text-align: center;
+  line-height: 18px;
+  vertical-align: middle;
+  display: inline-block;
+  float: none;
+ }
+
+ &.sbp-custom-image-meta {
+  img {
+   max-width: 150px;
+  }
+ }
+
+ .sbp_map {
+  -moz-transition: none;
+  -webkit-transition: none;
+  -o-transition: color 0 ease-in;
+  transition: none;
+
+  * {
+   -moz-transition: none;
+   -webkit-transition: none;
+   -o-transition: color 0 ease-in;
+   transition: none;
+
+  }
+ }
+
+ *:not(.sbp-after-message),
+ *:not(.sbp-map) {
+  display: table-row;
+  width: 100%;
+  float: left;
+
+  &.wp-editor-tools,
+  &.wp-core-ui,
+  &.wp-media-buttons,
+  &.wp-switch-editor,
+  &.wp-core-ui .button {
+   width: auto;
+  }
+
+  &.wp-editor-tabs {
+   display: block;
+   width: auto;
+   float: right;
+  }
+
+  &.gmnoprint,
+  &.gmnoprint * {
+   width: auto;
+   float: inherit;
+   display: block;
+  }
+
+  &.sbp_map *,
+  &.mce-tinymce.mce-container.mce-panel *,
+  &.mce-container *,
+  &.mce-container-body &.mce-tinymce * &.sbp-tippy-admin-message {
+   width: auto;
+   float: inherit;
+   display: inherit;
+  }
+ }
+
+ label {
+  text-align: left;
+  font-weight: 500;
+  padding: 2% 0% !important;
+  margin-bottom: 10px;
+ }
+
+ &.sbp-show {
+  display: table !important;
+  width: 100%;
+  margin-bottom: 2%;
+
+  >div {
+   display: table-cell !important;
+   padding: 1%;
+   vertical-align: middle;
+  }
+
+  div {
+   &.ss1 {
+    width: 34%;
+    font-weight: bold;
+   }
+
+   &.ss2 {
+    width: 58%;
+   }
+  }
+ }
+
+ &[data-type="radio"] {
+  label.sbp-radio-options {
+   width: auto;
+   display: table;
+
+   input,
+   span {
+    display: table-cell;
+    width: auto;
+    float: left;
+   }
+  }
+ }
+}
