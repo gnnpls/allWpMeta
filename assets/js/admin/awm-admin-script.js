@@ -3,15 +3,15 @@ awm_add_map();
 
 
 
-jQuery(document).on('click', '.sbp-repeater-contents .sbp_action', function () {
+jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 
- var repeater = jQuery(this).closest('.sbp-repeater').attr('data-id');
- if (jQuery(this).hasClass('sbp-add')) {
-  var old_counter = parseInt(jQuery('.sbp-repeater[data-id="' + repeater + '"] .sbp-repeater-content:last').attr('data-counter'));
-  jQuery('.sbp-repeater[data-id="' + repeater + '"] .sbp-repeater-content:last').clone().addClass('cloned').appendTo('.sbp-repeater[data-id="' + repeater + '"] .sbp-repeater-contents');
+ var repeater = jQuery(this).closest('.awm-repeater').attr('data-id');
+ if (jQuery(this).hasClass('awm-add')) {
+  var old_counter = parseInt(jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content:last').attr('data-counter'));
+  jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content:last').clone().addClass('cloned').appendTo('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-contents');
   var new_counter = old_counter + 1;
-  jQuery('.sbp-repeater[data-id="' + repeater + '"] .sbp-repeater-content.cloned').attr('data-counter', new_counter);
-  jQuery('.sbp-repeater[data-id="' + repeater + '"] .sbp-repeater-content.cloned').find('input,select,textarea').each(function () {
+  jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').attr('data-counter', new_counter);
+  jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').find('input,select,textarea').each(function () {
    jQuery(this).val('');
    var namee, id;
    if (jQuery(this).attr("name")) {
@@ -22,19 +22,19 @@ jQuery(document).on('click', '.sbp-repeater-contents .sbp_action', function () {
    }
 
    if (jQuery(this).closest('.sbp-meta-field').hasClass('awm-custom-image-meta')) {
-    jQuery('.sbp-repeater-content[data-counter="' + new_counter + '"] .awm-custom-image-meta').attr('data-input', id);
-    jQuery('.sbp-repeater-content[data-counter="' + new_counter + '"] .awm-image-upload').attr('id', 'sbp_image' + id);
-    jQuery('.sbp-repeater-content[data-counter="' + new_counter + '"] .awm-image-upload .awm_custom_image_remove_image_button').trigger('click');
+    jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-custom-image-meta').attr('data-input', id);
+    jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-image-upload').attr('id', 'awm_image' + id);
+    jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-image-upload .awm_custom_image_remove_image_button').trigger('click');
    }
   });
-  jQuery('.sbp-repeater[data-id="' + repeater + '"] .sbp-repeater-content.cloned').removeClass('cloned');
+  jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').removeClass('cloned');
 
-  jQuery('.sbp-repeater-content[data-counter="' + new_counter + '"] input.hasDatepicker').removeClass('hasDatepicker');
+  jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] input.hasDatepicker').removeClass('hasDatepicker');
 
 
   sbp_create_calendar();
  } else {
-  jQuery(this).closest('.sbp-repeater[data-id="' + repeater + '"] .sbp-repeater-content').remove();
+  jQuery(this).closest('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content').remove();
  }
 
 });

@@ -4,32 +4,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 0, $b = 0, $specific = '', $sep = ', ')
+function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $label = true, $specific = '', $sep = ', ')
 {
-    /*
-
-    $u is to define what kind of post type is
-    $d whhat to display
-    $b= for getting links / 4 strip labels
-
-     */
-    /*function to spit our custom fields*/
-
     $msg = array();
-    $extra_string = '';
-    $extra_fields = array();
-    if (!empty($extra)) {
-        foreach ($extra as $k => $v) {
-            $extra_fields[] = 'data-'.$k.'="'.$v.'"';
-        }
-    }
-
-    $extra_string = implode(' ', $extra_fields);
     foreach ($arrs as $n => $a) {
         /*check if hidden val or not*/
-
         $required = (isset($a['required']) && $a['required']) ? 'required="true"' : false;
-
         $original_meta = $n;
         $ins = '';
         $label = isset($a['label']) ? $a['label'] : $n;
@@ -43,16 +23,19 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                 $label_class = $extra_fields2 = array();
                 $extraa = '';
                 $class = isset($a['class']) ? implode(' ', $a['class']) : '';
-                switch ($u) {
-                    case 1:
+                switch ($view) {
+                    case 'user':
                         $val = get_user_meta($id, $original_meta, true) ?: '';
                         break;
-                    case 22:
-                        $val = get_option($n);
+                    case 'term':
+                        $val = get_term_meta($id, $original_meta, true) ?: '';
                         break;
-                    default:
+                    case 'post':
                         $val = get_post_meta($id, $original_meta, true) ?: '';
                         break;
+                    default:
+                        $val = 0;
+                    break;
                 }
 
                 if (isset($a['label_class']) && !empty($a['label_class'])) {
@@ -78,11 +61,68 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                     $label_class[] = 'sbp_needed';
                     $required = '';
                 }
-                switch ($d) {
-                    case 0:
+                switch ($target) {
+                    case 'no-value':
+                        /*just display the meta*/
+                        switch ($a['case']) {
+                            case 'input':
+                                switch ($a['type']) {
+                                    case 'checkbox':
+                                        $val = $val == 1 ? awm_Yes : awm_No;
+                                        break;
+                                    case 'hidden':
+                                        if ($d == 1) {
+                                            $ins .= '<input type="'.$a[2].'" name="'.$original_meta.'" id="'.$original_meta_id.'" value="'.$val.'" '.$extraa.' class="'.$class.'"/>';
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                break;
+                            case 'checkbox_multiple':
+                            case 'select':
+                                $old_val = $val;
+                                $val = array();
+                                if (!empty($a['options']) && !empty($old_val)) {
+                                    foreach ($a['options'] as $vv => $vvv) {
+                                        if (is_array($old_val)) {
+                                            foreach ($old_val as $ld => $lb) {
+                                                if ($vv == $lb) {
+                                                    $val[] = $vvv['label'];
+                                                    unset($old_val[$ld]);
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            if ($old_val == $vv) {
+                                                $val[] = $vvv['label'];
+                                            }
+                                        }
+                                    }
+                                    $val = implode($sep, $val);
+                                } else {
+                                    $val = '-';
+                                }
+                                break;
+                        }
+
+                        if ($d == 1) {
+                            $label_class[] = 'sbp_no_show';
+
+                            $ins .= '<div class="ss1">'.$a['label'].'</div><div class="ss2" id="'.$n.'">'.$val.'</div>';
+                        } else {
+                            $msg[$n] = array('value' => $val, 'label' => $a['label']);
+                        }
+                        break;
+                    case 'read':
+                        /*case to return the meta in array*/
+                        $msg[$n] = array('value' => $val, 'attrs' => $a);
+                        $stop = 1;
+                        break;
+                    default:
                         /*display input fields*/
                         if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'awm_tab') {
-                            if ($b != 4) {
+                            if ($label && $view != 'none') {
                                 $ins .= '<label for="'.$original_meta_id.'"><span>'.$label.'</span></label>';
                             }
                         }
@@ -189,7 +229,7 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                     $ins .= ob_get_clean();
                                     $label_class[] = 'awm-wp-editor';
                                 } else {
-                                    $ins .= '<textarea rows="5" name="'.$original_meta.'" id="'.$original_meta_id.'" '.$extra_string.' class="'.$class.'" '.$required.'>'.$val.'</textarea>';
+                                    $ins .= '<textarea rows="5" name="'.$original_meta.'" id="'.$original_meta_id.'" class="'.$class.'" '.$required.'>'.$val.'</textarea>';
                                 }
                                 break;
                             case 'radio':
@@ -209,12 +249,12 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                     $data['attributes']['id'] = $original_meta_id.'_'.$key;
                                     $data['attributes']['exclude_meta'] = true;
 
-                                    $ins .= awm_show_content(0, array($inputname => $data));
+                                    $ins .= awm_show_content(array($inputname => $data));
                                 }
                                 $ins .= '</div></div>';
 
                                 break;
-                            case 'sbp_tab':
+                            case 'awm_tab':
                                 if (isset($a['awm_tabs']) && !empty($a['awm_tabs'])) {
                                     $main_tab_id = $original_meta;
                                     $tabs = '';
@@ -238,7 +278,7 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                             }
                                             $data['attributes']['exclude_meta'] = true;
 
-                                            $tab_contents .= awm_show_content(0, array($inputname => $data));
+                                            $tab_contents .= awm_show_content(array($inputname => $data));
                                         }
                                         $tab_contents .= '</div>';
                                     }
@@ -260,9 +300,9 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                                 break;
                             case 'repeater':
                                 if (!empty($a['include'])) {
-                                    $ins .= '<div class="sbp-repeater" data-count="'.count($a['include']).'" data-id="'.$original_meta_id.'">';
-                                    $ins .= '<div class="sbp-repeater-title">'.$a['label'].'</div>';
-                                    $ins .= '<div class="sbp-repeater-contents">';
+                                    $ins .= '<div class="awm-repeater" data-count="'.count($a['include']).'" data-id="'.$original_meta_id.'">';
+                                    $ins .= '<div class="awm-repeater-title">'.$a['label'].'</div>';
+                                    $ins .= '<div class="awm-repeater-contents">';
 
                                     $val = !empty($val) ? array_values($val) : array();
 
@@ -272,7 +312,7 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
 
                                     $counter = !empty($val) ? count($val) : 1;
                                     for ($i = 0; $i < $counter; ++$i) {
-                                        $ins .= '<div class="sbp-repeater-content" data-counter="'.$i.'">';
+                                        $ins .= '<div class="awm-repeater-content" data-counter="'.$i.'">';
                                         foreach ($a['include'] as $key => $data) {
                                             $inputname = $original_meta.'['.$i.']['.$key.']';
                                             if (isset($val[$i][$key])) {
@@ -282,10 +322,10 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
 
                                             $data['attributes']['id'] = $original_meta.'_'.$i.'_'.$key;
 
-                                            $ins .= awm_show_content(0, array($inputname => $data));
+                                            $ins .= awm_show_content(array($inputname => $data));
                                         }
-                                        $item = isset($a['item_name']) ? $a['item_name'] : sbp_Roww;
-                                        $ins .= '<div class="sbp-actions"><div class="sbp-repeater-remove"><span class="sbp_action sbp-remove">'.sbp_Remove.' '.$item.'</span></div><div class="sbp-repeater-add"><span class="sbp_action sbp-add">'.sbp_Add.' '.$item.'</span></div></div>';
+                                        $item = isset($a['item_name']) ? $a['item_name'] : awm_Roww;
+                                        $ins .= '<div class="awm-actions"><div class="awm-repeater-remove"><span class="awm_action awm-remove">'.awm_Remove.' '.$item.'</span></div><div class="awm-repeater-add"><span class="awm_action awm-add">'.awm_Add.' '.$item.'</span></div></div>';
 
                                         $ins .= '</div>';
                                         /*repeater content end*/
@@ -298,78 +338,20 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
                             default:
                                 break;
                         }
-                        if ($b != 4 && $b != 5 && !(isset($a['attributes']['exclude_meta']))) {
+                        if ($label && !(isset($a['attributes']['exclude_meta'])) && $view != 'none') {
                             $ins .= '<input type="hidden" name="awm_custom_meta[]" value="'.$original_meta.'"/>';
                         }
 
-                        break;
-                    case 1:
-                    case 3:
-                        /*just display the meta*/
-                        switch ($a['case']) {
-                            case 'input':
-                                switch ($a['type']) {
-                                    case 'checkbox':
-                                        $val = $val == 1 ? sbp_Yes : sbp_No;
-                                        break;
-                                    case 'hidden':
-                                        if ($d == 1) {
-                                            $ins .= '<input type="'.$a[2].'" name="'.$original_meta.'" id="'.$original_meta_id.'" value="'.$val.'" '.$extraa.' class="'.$class.'"/>';
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                break;
-                            case 'checkbox_multiple':
-                            case 'select':
-                                $old_val = $val;
-                                $val = array();
-                                if (!empty($a['options']) && !empty($old_val)) {
-                                    foreach ($a['options'] as $vv => $vvv) {
-                                        if (is_array($old_val)) {
-                                            foreach ($old_val as $ld => $lb) {
-                                                if ($vv == $lb) {
-                                                    $val[] = $vvv['label'];
-                                                    unset($old_val[$ld]);
-                                                    break;
-                                                }
-                                            }
-                                        } else {
-                                            if ($old_val == $vv) {
-                                                $val[] = $vvv['label'];
-                                            }
-                                        }
-                                    }
-                                    $val = implode($sep, $val);
-                                } else {
-                                    $val = '-';
-                                }
-                                break;
-                        }
-
-                        if ($d == 1) {
-                            $label_class[] = 'sbp_no_show';
-
-                            $ins .= '<div class="ss1">'.$a['label'].'</div><div class="ss2" id="'.$n.'">'.$val.'</div>';
-                        } else {
-                            $msg[$n] = array('value' => $val, 'label' => $a['label']);
-                        }
-                        break;
-                    case 2:
-                        /*case to return the meta in array*/
-                        $msg[$n] = array('value' => $val, 'attrs' => $a);
-                        $stop = 1;
                         break;
                 }
 
                 if ($stop != 1 && isset($n)) {
                     switch ($view) {
-                        case 1:
+                        case 'none':
                             /*fronted view*/
                             $msg[] = $ins;
                             break;
-                        case 2:
+                        case 'user':
                             /*user view*/
                             $msg[] = '<tr data-input="'.$original_meta_id.'"><th><label for="'.$original_meta_id.'">'.$a['label'].'</label></th>';
                             $msg[] = '<td>'.$ins.'</td></tr>';
@@ -388,26 +370,23 @@ function awm_show_content($view, $arrs, $id = 0, $extra = array(), $u = 0, $d = 
             }
         }
     }
-    if ($b == 1 && $d == 1) {
-        if ($view == 1) {
-            $url = get_edit_post_link($id);
-        } else {
-            $url = get_edit_user_link($id);
-        }
-        $msg[] = '<div class="sbp_admin_action"><a href="'.$url.'" target="_blank">'.sbp_Edit.'</a></div>';
-    }
-    if ($d <= 1) {
+    $msg = apply_filters('awm_show_content_filter', $msg, $id, $arrs, $view, $target, $label, $specific, $sep);
+    switch ($target) {
+        case 'edit':
         $msg = implode('', $msg);
+        break;
+        default:
+        break;
     }
 
     return $msg;
 }
 
-function awm_save_custom_meta($data, $dataa, $id, $u = 0, $tt = '')
+function awm_save_custom_meta($data, $dataa, $id, $view = 'post', $tt = '')
 {
     if (isset($data) && !empty($data)) {
-        $arr = awm_custom_meta_update_vars($data, $dataa, $id, $u);
-        do_action('awm_custom_meta_update_action', $data, $dataa, $id, $u, $tt);
+        $arr = awm_custom_meta_update_vars($data, $dataa, $id, $view);
+        do_action('awm_custom_meta_update_action', $data, $dataa, $id, $view, $tt);
 
         return $arr;
     }
@@ -441,8 +420,8 @@ function awm_custom_meta_update_vars($meta, $metaa, $id, $u)
             $val = isset($chk) ? $chk : '';
             $arr[$k] = $val;
         }
-        switch ($u) {
-            case 2:
+        switch ($view) {
+            case 'user':
                 /*update user meta*/
                 if (!empty($val)) {
                     update_user_meta($id, $k, $val);
@@ -450,12 +429,12 @@ function awm_custom_meta_update_vars($meta, $metaa, $id, $u)
                     delete_user_meta($id, $k);
                 }
                 break;
-            case 22:
-                /*update_options*/
+            case 'term':
+                /*update user meta*/
                 if (!empty($val)) {
-                    update_option($k, $val);
+                    update_term_meta($id, $k, $val);
                 } else {
-                    delete_option($k);
+                    delete_term_meta($id, $k);
                 }
                 break;
             default:

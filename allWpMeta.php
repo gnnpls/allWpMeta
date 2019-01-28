@@ -24,4 +24,5 @@ function all_wp_meta_load_textdomain()
     load_plugin_textdomain('all-wp-meta', false, dirname(plugin_basename(__FILE__)).'/languages/');
 }
 
+require_once 'languages/strings.php';
 require_once 'inc/main.php';
