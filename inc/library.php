@@ -123,7 +123,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         /*display input fields*/
                         if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'awm_tab') {
                             if ($label && $view != 'none') {
-                                $ins .= '<label for="'.$original_meta_id.'"><span>'.$label.'</span></label>';
+                                $ins .= '<label for="'.$original_meta_id.'" class="awm-input-label"><span>'.$label.'</span></label>';
                             }
                         }
                         if (!empty($a['attributes']) && is_array($a['attributes'])) {
@@ -179,7 +179,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     if (is_array($val) && in_array($dlm, $val)) {
                                         $chk_ex = ' checked';
                                     }
-                                    $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><input type="checkbox" name="'.$original_meta.'[]" id="'.$original_meta_id.'_'.$dlm.'" value="'.$dlm.'" '.$extraa.$chk_ex.' class="'.$class.'"/><label for="'.$original_meta_id.'_'.$dlm.'"><span>'.$dlmm['label'].'</span></label></div></div>';
+                                    $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><input type="checkbox" name="'.$original_meta.'[]" id="'.$original_meta_id.'_'.$dlm.'" value="'.$dlm.'" '.$extraa.$chk_ex.' class="'.$class.'"/><label for="'.$original_meta_id.'_'.$dlm.'" class="awm-input-label"><span>'.$dlmm['label'].'</span></label></div></div>';
                                 }
                                 $n = $n.'[]';
                                 break;
@@ -351,9 +351,20 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                             /*fronted view*/
                             $msg[] = $ins;
                             break;
+                        case 'term':
+                            switch ($id) {
+                                case 0:
+                                $msg[] = '<div class="form-field term-group awm-term-meta-row">'.$ins.'</div>';
+                                break;
+                                default:
+                                $msg[] = '<tr class="form-field term-group-wrap" data-input="'.$original_meta_id.'"><th scope="row" class="'.implode(' ', $label_class).'" data-input="'.$original_meta_id.'" data-type="'.$a['case'].'"><label for="'.$original_meta_id.'" class="awm-input-label">'.$a['label'].'</label></th><td class="awm-term-input">'.$ins.'</td></tr>';
+                                break;
+                            }
+
+                        break;
                         case 'user':
                             /*user view*/
-                            $msg[] = '<tr data-input="'.$original_meta_id.'"><th><label for="'.$original_meta_id.'">'.$a['label'].'</label></th>';
+                            $msg[] = '<tr data-input="'.$original_meta_id.'"><th class="'.implode(' ', $label_class).'" data-input="'.$original_meta_id.'" data-type="'.$a['case'].'"><label for="'.$original_meta_id.'" class="awm-input-label">'.$a['label'].'</label></th>';
                             $msg[] = '<td>'.$ins.'</td></tr>';
                             break;
                         default:
@@ -392,7 +403,7 @@ function awm_save_custom_meta($data, $dataa, $id, $view = 'post', $tt = '')
     }
 }
 
-function awm_custom_meta_update_vars($meta, $metaa, $id, $u)
+function awm_custom_meta_update_vars($meta, $metaa, $id, $view)
 {
     foreach ($meta as $k) {
         $chk = '';

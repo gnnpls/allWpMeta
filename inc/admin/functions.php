@@ -29,7 +29,13 @@ function awm_profile_update($user_id)
     }
 }
 
-add_action('edit_terms', function ($term_id, $taxonomy) {
+add_action('edit_term', function ($term_id, $taxonomy) {
+    if (isset($_POST['awm_custom_meta'])) {
+        $custom_meta = awm_save_custom_meta($_POST['awm_custom_meta'], $_POST, $term_id, 'term');
+    }
+}, 10, 2);
+
+add_action('create_term', function ($term_id, $taxonomy) {
     if (isset($_POST['awm_custom_meta'])) {
         $custom_meta = awm_save_custom_meta($_POST['awm_custom_meta'], $_POST, $term_id, 'term');
     }
