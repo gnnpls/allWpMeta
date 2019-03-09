@@ -21,7 +21,7 @@ jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 
    }
 
-   if (jQuery(this).closest('.sbp-meta-field').hasClass('awm-custom-image-meta')) {
+   if (jQuery(this).closest('.awm-meta-field').hasClass('awm-custom-image-meta')) {
     jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-custom-image-meta').attr('data-input', id);
     jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-image-upload').attr('id', 'awm_image' + id);
     jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-image-upload .awm_custom_image_remove_image_button').trigger('click');

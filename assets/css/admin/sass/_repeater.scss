@@ -23,7 +23,7 @@ margin:0 5px;
 padding: 5px 10px;
 background: rgba(0, 0, 0, 0.05);
 margin-top: 15px;
-    .sbp-meta-field {
+    .awm-meta-field {
         border-bottom: none !important;
         padding-bottom:5px;
         margin-bottom:5px;
@@ -73,7 +73,7 @@ margin-top: 15px;
 
 .awm-repeater[data-count="2"] &
 {
-    .sbp-meta-field{
+    .awm-meta-field{
     width:46% !important;
     margin:1%;
     display: inline-block;
@@ -82,7 +82,7 @@ margin-top: 15px;
 
 
 .awm-repeater[data-count="3"] & {
-    .sbp-meta-field {
+    .awm-meta-field {
         width: 31% !important;
         margin: 1%;
         display: inline-block;
@@ -90,7 +90,7 @@ margin-top: 15px;
 }
 
 .awm-repeater[data-count="4"] & {
-    .sbp-meta-field {
+    .awm-meta-field {
         width: 22% !important;
         margin: 1%;
         display: inline-block;
@@ -99,7 +99,7 @@ margin-top: 15px;
 
 
 .awm-repeater[data-count="5"] & {
-    .sbp-meta-field {
+    .awm-meta-field {
         width: 18% !important;
         margin: 1%;
         display: inline-block;

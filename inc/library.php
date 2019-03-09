@@ -55,7 +55,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                     $original_meta_id = $a['attributes']['id'];
                     unset($a['attributes']['id']);
                 }
-
+                $label_class[] = $a['case'];
                 /*change here to array*/
                 if ((isset($a['class']) && (in_array('sbp_req_for_book', $a['class']) || in_array('sbp_req_for_save', $a['class']))) || $required) {
                     $label_class[] = 'sbp_needed';
@@ -66,6 +66,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         /*just display the meta*/
                         switch ($a['case']) {
                             case 'input':
+                                $label_class[] = $a['case'];
                                 switch ($a['type']) {
                                     case 'checkbox':
                                         $val = $val == 1 ? awm_Yes : awm_No;
@@ -120,6 +121,10 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         $stop = 1;
                         break;
                     default:
+                        if (isset($a['type'])) {
+                            $label_class[] = $a['type'];
+                        }
+
                         /*display input fields*/
                         if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'awm_tab') {
                             if ($label && $view != 'none') {
@@ -151,7 +156,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                             case 'input':
                                 $label_class[] = 'awm-cls-33';
                                 $input_type = $a['type'];
-                                $after_message = (isset($a['after_message']) && !empty($a['after_message'])) ? '<span class="awm-after-message">'.$a['after_message'].'</span>' : '';
+                                $after_message = (isset($a['after_message']) && !empty($a['after_message'])) ? '<span class="awm-after-message"><label for="'.$original_meta_id.'">'.$a['after_message'].'</span></label>' : '';
                                 switch ($a['type']) {
                                     case 'number':
                                         $val = (int) $val;
@@ -371,7 +376,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                             $msg[] = '<td>'.$ins.'</td></tr>';
                             break;
                         default:
-                            $label_class[] = 'sbp-meta-field';
+                            $label_class[] = 'awm-meta-field';
                             $msg[] = '<div class="'.implode(' ', $label_class).'" data-input="'.$original_meta_id.'" data-type="'.$a['case'].'">';
                             $msg[] = $ins;
                             if (is_admin() && isset($a['information']) && !empty($a['information'])) {
@@ -481,4 +486,122 @@ function awm_custom_image_image_uploader_field($name, $id, $value = '', $multipl
 		<input type="hidden" name="'.$name.'" id="'.$id.'" value="'.$value.'" '.$required.'/>
 		<a href="#" class="awm_custom_image_remove_image_button" style="display:inline-block;display:'.$display.'">Remove image</a>
 	</div>';
+}
+
+function awm_add_meta_boxes($postType, $post)
+{
+    $metaBoxes = apply_filters('awm_add_meta_boxes_filter', array());
+    if (!empty($metaBoxes)) {
+        wp_enqueue_media();
+        foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {
+            if (isset($metaBoxData['library']) && !empty($metaBoxData['library'])) {
+                $metaBoxData['id'] = $metaBoxKey;
+                add_meta_box($metaBoxKey,
+            $metaBoxData['title'], // $title
+            function ($post) use ($metaBoxData) {
+                echo apply_filters('awm_add_meta_boxes_filter_content', awm_show_content($metaBoxData['library'], $post->ID), $metaBoxData['id']);
+            },
+            $metaBoxData['postTypes'], // $page
+            $metaBoxData['context'], // $context
+            $metaBoxData['priority']
+            ); // $priority
+            }
+        }
+    }
+}
+
+if (is_admin()) {
+    add_action('add_meta_boxes', 'awm_add_meta_boxes', 10, 2);
+    add_action('admin_init', 'awm_admin_post_columns');
+}
+
+function awm_admin_post_columns()
+{
+    global $pagenow;
+
+    switch ($pagenow) {
+        /*case 'edit-tags.php':
+            foreach ($posts as $p) {
+                if (isset($_GET['post_type']) && isset($_GET['taxonomy']) && $_GET['post_type'] == $postType && isset($p['tax_types']) && array_key_exists($_GET['taxonomy'], $p['tax_types'])) {
+                    add_filter('manage_edit-'.$_GET['taxonomy'].'_columns', function ($columns) use ($p) {
+                        $columns['fx_metrics'] = __('Total Views', 'filox-metrics');
+
+                        return $columns;
+                    }, 10, 1);
+                    add_filter('manage_edit-'.$_GET['taxonomy'].'_sortable_columns', function ($columns) use ($p) {
+                        $columns['fx_metrics'] = '_fm_views_total';
+
+                        return $columns;
+                    }, 10, 1);
+
+                    add_action('manage_'.$_GET['taxonomy'].'_custom_column', function ($content, $column, $term_id) {
+                        if ($column == 'fx_metrics') {
+                            echo get_term_meta($term_id, '_fm_views_total', true) ?: 0;
+                        }
+                    }, 10, 3);
+                    break;
+                }
+            }
+
+            break;*/
+        case 'edit.php':
+
+            $metaBoxes = apply_filters('awm_add_meta_boxes_filter', array());
+            if (!empty($metaBoxes)) {
+                foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {
+                    if (isset($metaBoxData['library']) && !empty($metaBoxData['library'])) {
+                        foreach ($metaBoxData['library'] as $meta => $data) {
+                            if (isset($data['admin_list']) && $data['admin_list']) {
+                                $data['key'] = $meta;
+                                foreach ($metaBoxData['postTypes'] as $postType) {
+                                    if (isset($_GET['post_type']) && $_GET['post_type'] == $postType) {
+                                        add_filter('manage_'.$postType.'_posts_columns', function ($columns) use ($data) {
+                                            $columns[$data['key']] = $data['label'];
+
+                                            return $columns;
+                                        }, 10, 1);
+                                        /*add_filter('manage_edit-'.$postType.'_sortable_columns', function ($columns) use ($data) {
+                                            $columns['_fm_views_total'] = '_fm_views_total';
+                                            $columns['_fm_arch_impr_total'] = '_fm_arch_impr_total';
+                                            if (isset($p['sbp_book'])) {
+                                                $columns['_fm_form_impr_total'] = '_fm_form_impr_total';
+                                            }
+
+                                            return $columns;
+                                        }, 10, 1);*/
+
+                                        add_action('manage_'.$postType.'_posts_custom_column', function ($column) use ($data) {
+                                            global $post;
+                                            if ($data['key'] == $column) {
+                                                echo awm_display_meta_value($data['key'], $data, $post->ID);
+                                            }
+                                        }, 10, 1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+            default:
+            break;
+    }
+}
+
+function awm_display_meta_value($meta, $data, $postId)
+{
+    $value = get_post_meta($postId, $meta, 'true');
+    if (!empty($value)) {
+        switch ($data['case']) {
+        case 'select':
+        case 'checkbox_mutliple':
+        if (array_key_exists($value, $data['options'])) {
+            $value = $data['options'][$value]['label'];
+        }
+        break;
+    }
+    }
+
+    return $value;
 }
