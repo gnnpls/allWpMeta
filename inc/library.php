@@ -308,7 +308,8 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 break;
                             case 'repeater':
                                 if (!empty($a['include'])) {
-                                    $ins .= '<div class="awm-repeater" data-count="'.count($a['include']).'" data-id="'.$original_meta_id.'">';
+                                    $maxrows = isset($a['maxrows']) ? absint($a['maxrows']) : '';
+                                    $ins .= '<div class="awm-repeater" data-count="'.count($a['include']).'" data-id="'.$original_meta_id.'" maxrows="'.$maxrows.'">';
                                     $ins .= '<div class="awm-repeater-title">'.$a['label'].'</div>';
                                     $ins .= '<div class="awm-repeater-contents">';
 
