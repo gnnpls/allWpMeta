@@ -210,3 +210,7 @@ function placeMarker(map, location, map_id) {
  map.panTo(marker.getPosition());
  map.fitBounds();
 }
+
+function noenter() {
+  return !(window.event && window.event.keyCode == 13);
+}
