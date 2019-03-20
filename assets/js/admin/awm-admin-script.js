@@ -1,7 +1,7 @@
 /*inits*/
 awm_add_map();
 awmCallbacks();
-
+awmSelectrBoxes();
 
 jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 
@@ -236,4 +236,18 @@ function awm_create_calendar() {
     }
     jQuery('#' + idd).datepicker(parameters);
   });
+}
+
+function awmSelectrBoxes()
+{
+  var elems = document.querySelectorAll('.awm-meta-field select');
+  if (elems)
+  {
+    elems.forEach(function(elem){
+      var slim = new SlimSelect({
+        select: '#'+elem.id,
+        showSearch: false
+      })
+    });
+  }
 }
