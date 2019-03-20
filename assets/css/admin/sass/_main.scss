@@ -132,6 +132,17 @@
    width: auto;
    display: flex;
   }
+  .ss-values{
+   width: calc(100% - 30px);
+  }
+  .ss-value{
+   display:flex;
+   width:unset;
+   > span{
+    display: inline;
+    width:auto;
+   }
+  }
  }
  label {
   text-align: left;
