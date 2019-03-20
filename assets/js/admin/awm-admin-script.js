@@ -1,6 +1,6 @@
 /*inits*/
 awm_add_map();
-
+awmCallbacks();
 
 
 jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
@@ -107,7 +107,7 @@ function awm_add_map() {
 
 function awm_call_maps_api(data) {
   awm_map_options = JSON.parse(data);
-  var src = "//maps.googleapis.com/maps/api/js?libraries=places&callback=initMap";
+  var src = "//maps.googleapis.com/maps/api/js?libraries=places&callback=awmInitMap";
   if (awm_map_options.key !== null) {
     src += '&key=' + awm_map_options.key;
   }
@@ -119,7 +119,7 @@ function awm_call_maps_api(data) {
   document.body.appendChild(a)
 }
 
-function initMap() {
+function awmInitMap() {
 
   var map = document.getElementsByClassName("awm_map");
 

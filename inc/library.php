@@ -402,11 +402,11 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
     return $msg;
 }
 
-function awm_save_custom_meta($data, $dataa, $id, $view = 'post', $tt = '')
+function awm_save_custom_meta($data, $dataa, $id, $view = 'post', $postType = '')
 {
     if (isset($data) && !empty($data)) {
         $arr = awm_custom_meta_update_vars($data, $dataa, $id, $view);
-        do_action('awm_custom_meta_update_action', $data, $dataa, $id, $view, $tt);
+        do_action('awm_custom_meta_update_action', $data, $dataa, $id, $view, $postType);
 
         return $arr;
     }

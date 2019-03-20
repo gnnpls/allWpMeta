@@ -41,3 +41,31 @@ function awm_js_ajax_call(url, js_callback) {
 
  request.send();
 }
+
+function awmCallbacks()
+{
+var elems = document.querySelectorAll('input[data-callback],select[data-callback],textarea[data-callbak]');
+if (elems)
+{
+ elems.forEach(function (elem) {
+  awm_check_call_back(elem);
+  elem.addEventListener("change", function () {
+    awm_check_call_back(elem);
+  });
+ 
+ 
+ });
+}
+}
+ 
+
+function awm_check_call_back(elem) {
+  var call_back = window[elem.getAttribute('data-callback')];
+
+  if (typeof call_back == 'function') {
+   call_back();
+
+  } else {
+   console.log(elem.getAttribute('data-callback') + ' function does not exist!');
+  }
+ }

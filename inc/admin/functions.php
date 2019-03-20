@@ -7,8 +7,7 @@ if (!defined('ABSPATH')) {
 add_action('save_post', function ($post_id, $post, $out) {
     if ((!wp_is_post_revision($post_id) && 'auto-draft' != get_post_status($post_id) && 'trash' != get_post_status($post_id))) {
         if (isset($_POST['awm_custom_meta'])) {
-            $tt = get_post_type($post_id);
-            awm_save_custom_meta($_POST['awm_custom_meta'], $_POST, $post_id, 'post', $tt);
+            awm_save_custom_meta($_POST['awm_custom_meta'], $_POST, $post_id, 'post', get_post_type($post_id));
         }
     }
 }, 10, 3);
