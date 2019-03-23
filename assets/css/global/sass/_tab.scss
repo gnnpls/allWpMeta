@@ -26,8 +26,8 @@
  }
 
  .awm-tab {
-  display: table;
-  width: 100%;
+  display: table !important;
+  width: 100% !important;
  }
 
  /* Style the buttons inside the awm-tab */

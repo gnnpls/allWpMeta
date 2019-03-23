@@ -1,4 +1,5 @@
 .awm-meta-field {
+
  input,
  select,
  textarea {
@@ -6,20 +7,25 @@
    background: #f8f8f8;
   }
  }
+
  display: inline-block;
  vertical-align: top;
  position: relative;
  box-sizing: border-box;
+
  &.awm-section-field {
   border-bottom: solid 1px !important;
+
   .awm-meta-field {
    border: none;
   }
  }
+
  select[multiple="1"] {
   max-height: 150px;
   height: auto;
  }
+
  .awm-after-message {
   font-size: 95%;
   width: auto !important;
@@ -27,17 +33,21 @@
   display: inline-block !important;
   float: none !important;
   vertical-align: top;
+
   @media screen and (max-width: 1100px) {
    max-width: 85%;
   }
+
   @media screen and (max-width: 800px) {
    max-width: 80%;
   }
+
   label {
    font-weight: normal !important;
    padding: 0px !important;
   }
  }
+
  .sbp-tippy-admin-message {
   position: absolute;
   top: 6px;
@@ -46,19 +56,23 @@
   display: block !important;
   float: right;
   width: auto !important;
+
   .sbp_icon {
    cursor: pointer;
    float: right;
    font-size: 21px;
+
    &:hover {
     opacity: 0.7;
    }
   }
  }
+
  label {
   text-align: left;
   font-weight: 500;
  }
+
  input[type="checkbox"] {
   height: 18px !important;
   width: 18px !important;
@@ -68,16 +82,19 @@
   display: inline-block;
   float: none;
  }
+
  &.awm-custom-image-meta {
   img {
    max-width: 150px;
   }
  }
+
  .awm_map {
   -moz-transition: none;
   -webkit-transition: none;
   -o-transition: color 0 ease-in;
   transition: none;
+
   * {
    -moz-transition: none;
    -webkit-transition: none;
@@ -85,6 +102,7 @@
    transition: none;
   }
  }
+
  *:not(.ss-main),
  *:not(.awm-after-message),
  *:not(.awm-map),
@@ -94,6 +112,7 @@
   display: table-row;
   width: 100%;
   float: left;
+
   &.wp-editor-tools,
   &.wp-core-ui,
   &.wp-media-buttons,
@@ -101,17 +120,29 @@
   &.wp-core-ui .button {
    width: auto;
   }
+
   &.wp-editor-tabs {
    display: block;
    width: auto;
    float: right;
   }
+
+  &.awm_tablinks {
+   display: table-cell;
+   width: auto;
+  }
+  &.awm_tabcontent{
+   display:none;
+   float:none;
+  }
+
   &.gmnoprint,
   &.gmnoprint * {
    width: auto;
    float: inherit;
    display: block;
   }
+
   &.awm_map *,
   &.mce-tinymce.mce-container.mce-panel *,
   &.mce-container *,
@@ -121,58 +152,70 @@
    display: inherit;
   }
  }
+
  /*custom select rules*/
  .ss-main {
   >div {
    display: flex;
   }
+
   .ss-arrow,
   .ss-values,
   .ss-add {
    width: auto;
    display: flex;
   }
-  .ss-values{
+
+  .ss-values {
    width: calc(100% - 30px);
   }
-  .ss-value{
-   display:flex;
-   width:unset;
-   > span{
+
+  .ss-value {
+   display: flex;
+   width: unset;
+
+   >span {
     display: inline;
-    width:auto;
+    width: auto;
    }
   }
  }
+
  label {
   text-align: left;
   font-weight: 500;
   padding: 2% 0% !important;
   margin-bottom: 10px;
  }
+
  &.sbp-show {
   display: table !important;
   width: 100%;
   margin-bottom: 2%;
+
   >div {
    display: table-cell !important;
    padding: 1%;
    vertical-align: middle;
   }
+
   div {
    &.ss1 {
     width: 34%;
     font-weight: bold;
    }
+
    &.ss2 {
     width: 58%;
    }
   }
  }
+
  &[data-type="radio"] {
   label.awm-radio-options {
    width: auto;
    display: table;
+
    input,
    span {
     display: table-cell;
@@ -189,7 +232,9 @@
  float: left !important;
  margin-right: 10px;
  margin-bottom: 10px;
+
  .insider {
+
   label,
   input {
    display: table-cell;
@@ -215,6 +260,7 @@
   width: 45% !important;
   margin-right: 2% !important;
  }
+
  .awm-cls-50 {
   width: 90% !important;
   margin: 0 auto !important;
@@ -222,6 +268,7 @@
 }
 
 @media screen and (max-width: 429px) {
+
  .awm-cls-33,
  .awm-cls-50 {
   width: 90% !important;
@@ -235,6 +282,7 @@
  display: inline-table;
  margin-bottom: 15px;
  border: none !important;
+
  label {
   display: block;
   margin-bottom: 10px;
@@ -258,11 +306,19 @@
  }
 }
 
+
+#dashboard-widgets {
+ .awm-cls-33 {
+  width: 32%;
+ }
+}
+
 body.wp-admin {
  .awm-meta-field {
   label {
    font-weight: bold;
   }
+
   .awm-meta-message-label {
    font-weight: bold;
    text-align: left;

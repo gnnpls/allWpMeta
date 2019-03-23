@@ -329,8 +329,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                             }
                                             $data['attributes']['exclude_meta'] = true;
 
-                                            $data['attributes']['id'] = $original_meta.'_'.$i.'_'.$key;
-
+                                            $data['attributes']['id'] = str_replace(']', '_', str_replace('[', '_', $original_meta)).'_'.$i.'_'.$key;
                                             $ins .= awm_show_content(array($inputname => $data));
                                         }
                                         $item = isset($a['item_name']) ? $a['item_name'] : awm_Roww;

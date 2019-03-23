@@ -40,7 +40,7 @@ add_action('wp_loaded', function () {
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('awm-global-style');
     wp_enqueue_script('awm-global-script');
-}, 10, 1);
+}, 100);
 
 add_action('admin_enqueue_scripts', function () {
     wp_enqueue_style('awm-slim-lib-style');
@@ -49,4 +49,4 @@ add_action('admin_enqueue_scripts', function () {
     wp_enqueue_script('awm-slim-lib-script');
     wp_enqueue_script('awm-global-script');
     wp_enqueue_script('awm-admin-script');
-}, 10, 1);
+}, 100);
