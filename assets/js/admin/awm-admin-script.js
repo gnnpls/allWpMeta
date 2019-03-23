@@ -36,13 +36,15 @@ jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
       jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] input.hasDatepicker').removeClass('hasDatepicker');
 
 
-      awm_create_calendar();
+      repeaterInit();
     }
   } else {
     jQuery(this).closest('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content').remove();
   }
 
 });
+
+
 
 
 
@@ -250,4 +252,9 @@ function awmSelectrBoxes()
       })
     });
   }
+}
+
+function repeaterInit(){
+  awm_create_calendar();
+  awmSelectrBoxes();
 }
