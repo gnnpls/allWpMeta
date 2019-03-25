@@ -142,7 +142,6 @@
    float: inherit;
    display: block;
   }
-
   &.awm_map *,
   &.mce-tinymce.mce-container.mce-panel *,
   &.mce-container *,
@@ -152,13 +151,11 @@
    display: inherit;
   }
  }
-
  /*custom select rules*/
  .ss-main {
   >div {
    display: flex;
   }
-
   .ss-arrow,
   .ss-values,
   .ss-add {
@@ -327,3 +324,7 @@ body.wp-admin {
   }
  }
 }
+
+
+
+

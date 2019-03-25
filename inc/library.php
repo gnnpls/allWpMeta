@@ -56,11 +56,11 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                     unset($a['attributes']['id']);
                 }
                 $label_class[] = $a['case'];
-                /*change here to array*/
-                if ((isset($a['class']) && (in_array('sbp_req_for_book', $a['class']) || in_array('sbp_req_for_save', $a['class']))) || $required) {
-                    $label_class[] = 'sbp_needed';
+                $label_class = apply_filters('awm_label_class_filter', $label_class, $a, $required);
+                if (in_array('awm-needed', $label_class)) {
                     $required = '';
                 }
+
                 switch ($target) {
                     case 'no-value':
                         /*just display the meta*/
@@ -545,7 +545,6 @@ function awm_admin_post_columns()
 
             break;*/
         case 'edit.php':
-
             $metaBoxes = apply_filters('awm_add_meta_boxes_filter', array());
             if (!empty($metaBoxes)) {
                 foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {

@@ -2,7 +2,7 @@
 awm_add_map();
 awmCallbacks();
 awmSelectrBoxes();
-
+awmInitForms();
 jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 
   var repeater = jQuery(this).closest('.awm-repeater').attr('data-id');
@@ -257,4 +257,5 @@ function awmSelectrBoxes()
 function repeaterInit(){
   awm_create_calendar();
   awmSelectrBoxes();
+  awmInitForms();
 }
