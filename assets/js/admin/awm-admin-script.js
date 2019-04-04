@@ -6,7 +6,7 @@ awmInitForms();
 jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 
   var repeater = jQuery(this).closest('.awm-repeater').attr('data-id');
-  var maxRows = parseInt(jQuery(this).closest('.awm-repeater').attr('maxrows'));
+   var maxRows = jQuery(this).closest('.awm-repeater').attr('maxrows') ? parseInt(jQuery(this).closest('.awm-repeater').attr('maxrows')) : 0;
 
   if (jQuery(this).hasClass('awm-add')) {
     var old_counter = parseInt(jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content:last').attr('data-counter'));
