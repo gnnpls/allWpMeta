@@ -16,6 +16,8 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
         if (substr($n, 0, 1) === '_') {
             $n = ltrim($n, '_');
         }
+        /*check for role*/
+
         if (($n == $specific && $specific != '') || $specific == '') {
             $show = isset($a['show']) ? $a['show'] : 1;
             $stop = 0;
