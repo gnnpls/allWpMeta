@@ -248,7 +248,7 @@ function awmSelectrBoxes()
     elems.forEach(function(elem){
       var slim = new SlimSelect({
         select: '#'+elem.id,
-        showSearch: false
+        showSearch: true
       })
     });
   }
