@@ -248,7 +248,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     if ($vkey == $val) {
                                         $chk = 'checked="checked"';
                                     }
-                                    $ins .= '<label class="awm-radio-options"><input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $vkey . '" ' . $chk . ' ' . $required . '/><span class="awm-radio-label">' . $valll['label'] . '</span></label>';
+                                    $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $required . '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label>';
                                 }
                                 break;
                             case 'section':
