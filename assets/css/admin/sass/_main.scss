@@ -131,9 +131,10 @@
    display: table-cell;
    width: auto;
   }
-  &.awm_tabcontent{
-   display:none;
-   float:none;
+
+  &.awm_tabcontent {
+   display: none;
+   float: none;
   }
 
   &.gmnoprint,
@@ -142,6 +143,7 @@
    float: inherit;
    display: block;
   }
+
   &.awm_map *,
   &.mce-tinymce.mce-container.mce-panel *,
   &.mce-container *,
@@ -150,12 +152,18 @@
    float: inherit;
    display: inherit;
   }
+
+  &.mce-edit-area.mce-container {
+   width: 100% !important;
+  }
  }
+
  /*custom select rules*/
  .ss-main {
   >div {
    display: flex;
   }
+
   .ss-arrow,
   .ss-values,
   .ss-add {
@@ -324,7 +332,3 @@ body.wp-admin {
   }
  }
 }
-
-
-
-
