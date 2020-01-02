@@ -1,8 +1,10 @@
 /*inits*/
 awm_add_map();
 awmCallbacks();
+awmShowInputs();
 awmSelectrBoxes();
 awmInitForms();
+awmMultipleCheckBox();
 jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 
   var repeater = jQuery(this).closest('.awm-repeater').attr('data-id');
@@ -258,4 +260,34 @@ function repeaterInit(){
   awm_create_calendar();
   awmSelectrBoxes();
   awmInitForms();
+}
+
+
+function awmMultipleCheckBox() {
+  var elems = document.querySelectorAll('.checkbox_multiple.awm-meta-field');
+  if (elems) {
+    elems.forEach(function (elem) {
+      inputs = elem.querySelectorAll('input[type="checkbox"]');
+
+      if (inputs) {
+        inputs.forEach(function (input) {
+          var dataValue = input.getAttribute('data-value');
+          if (dataValue == 'awm_apply_all') {
+            input.addEventListener('change', function (e) {
+              var checked = input.checked;
+              var text = input.getAttribute('data-extra');
+
+              elem.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+                if (checkbox.value != '') {
+                  checkbox.checked = checked;
+                }
+              });
+              input.setAttribute('data-extra', document.getElementById('label_' + input.id).innerText);
+              document.getElementById('label_' + input.id).innerText = text;
+            });
+          }
+        });
+      }
+    });
+  }
 }

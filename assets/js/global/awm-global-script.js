@@ -42,11 +42,9 @@ function awm_js_ajax_call(url, js_callback) {
  request.send();
 }
 
-function awmCallbacks()
-{
+function awmCallbacks(){
 var elems = document.querySelectorAll('input[data-callback],select[data-callback],textarea[data-callbak]');
-if (elems)
-{
+if (elems) {
  elems.forEach(function (elem) {
   awm_check_call_back(elem);
   elem.addEventListener("change", function () {
@@ -71,8 +69,7 @@ function awm_check_call_back(elem) {
  }
 
 
-function awmInitForms()
-{
+function awmInitForms() {
 var forms = document.querySelectorAll('form');
 if (forms) {
   forms.forEach(function (form) {
@@ -82,8 +79,7 @@ if (forms) {
           e.preventDefault();
         }
       });
-    }
-    else {
+    } else {
       form.addEventListener('submit', function (e) {
         if (!awmCheckValidation(form)) {
           e.preventDefault();
@@ -146,3 +142,50 @@ function awmCheckValidation(form) {
   return check;
 }
 
+
+function awmShowInputs() {
+  var elems = document.querySelectorAll('input[showWhen],select[showWhen],textarea[showWhen]');
+
+  if (elems) {
+    var event = new Event('change');
+    elems.forEach(function (elem) {
+      var parent = elem.parentNode;
+      var inputs = JSON.parse(elem.getAttribute('showWhen').replace(/\'/g, '\"'));
+      if (parent.classList.contains('insider')) {
+        parent = parent.parentNode.parentNode;
+      }
+      for (var p in inputs) {
+        if (inputs.hasOwnProperty(p)) {
+          var element = document.getElementById(p);
+          element.addEventListener('change', function () {
+            switch (element.tagName) {
+              case 'SELECT':
+                if (this.value in inputs[p].values) {
+                  if (inputs[p].values[this.value]) {
+                    parent.classList.remove('sbp_no_show');
+                    return true;
+                  }
+                }
+                break;
+              case 'INPUT':
+                switch (element.getAttribute('type')) {
+                  case 'checkbox':
+                    if (element.checked == inputs[p].values) {
+                      parent.classList.remove('sbp_no_show');
+                      return true;
+                    }
+                    break;
+                }
+                break;
+            }
+            parent.classList.add('sbp_no_show');
+
+          });
+          element.dispatchEvent(event);
+        }
+
+      }
+
+    });
+  }
+}
