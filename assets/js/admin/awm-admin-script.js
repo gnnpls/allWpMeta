@@ -1,10 +1,14 @@
 /*inits*/
+
 awm_add_map();
 awmCallbacks();
 awmShowInputs();
 awmSelectrBoxes();
 awmInitForms();
 awmMultipleCheckBox();
+awm_create_calendar();
+
+
 jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 
   var repeater = jQuery(this).closest('.awm-repeater').attr('data-id');
@@ -230,7 +234,6 @@ function noenter() {
 function awm_create_calendar() {
   jQuery('.awm_cl_date:not(.hasDatepicker)').each(function () {
     var idd = jQuery(this).attr('id');
-
     var parameters = {
       dateFormat: 'dd-mm-yy',
       changeMonth: true

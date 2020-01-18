@@ -22,6 +22,25 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
             $show = isset($a['show']) ? $a['show'] : 1;
             $stop = 0;
             if ($show == 1) {
+                switch ($a['case'])
+                {
+                    case 'postType':
+                        $a['case'] = 'select';
+                        $number = isset($a['number']) ? $a['number'] : '-1';
+                        $args = isset($a['args']) ? $a['args'] : array();
+                        $a['options'] = awmPostFieldsForInput($a['post_type'], $number, $args);
+                    break;
+                    case 'date':
+                        $a['case'] = 'input';
+                        $a['type'] = 'text';
+                        $a['class'][] = 'awm_cl_date';
+
+                    break;
+                    default:
+                    break;
+                }
+
+                /*make changes for combined inputs*/
                 $label_class = $extra_fields2 = array();
                 $extraa = '';
                 $class = isset($a['class']) ? implode(' ', $a['class']) : '';
@@ -39,6 +58,8 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         $val = 0;
                         break;
                 }
+                
+
 
                 if (isset($a['label_class']) && !empty($a['label_class'])) {
                     $label_class = $a['label_class'];
