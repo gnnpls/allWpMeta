@@ -131,7 +131,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         }
 
                         if ($d == 1) {
-                            $label_class[] = 'sbp_no_show';
+                            $label_class[] = 'awm_no_show';
 
                             $ins .= '<div class="ss1">' . $a['label'] . '</div><div class="ss2" id="' . $n . '">' . $val . '</div>';
                         } else {
@@ -191,7 +191,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                         $val = 1;
                                         break;
                                     case 'hidden':
-                                        $label_class[] = 'sbp_no_show';
+                                        $label_class[] = 'awm_no_show';
                                         break;
                                     default:
                                         break;
@@ -622,6 +622,9 @@ function awm_display_meta_value($meta, $data, $postId)
                     $value = $data['options'][$value]['label'];
                 }
                 break;
+            case 'postType':
+                $value=get_the_title($value);
+                break;    
         }
     }
 

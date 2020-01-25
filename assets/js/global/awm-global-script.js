@@ -162,7 +162,7 @@ function awmShowInputs() {
               case 'SELECT':
                 if (this.value in inputs[p].values) {
                   if (inputs[p].values[this.value]) {
-                    parent.classList.remove('sbp_no_show');
+                    parent.classList.remove('awm_no_show');
                     return true;
                   }
                 }
@@ -171,14 +171,14 @@ function awmShowInputs() {
                 switch (element.getAttribute('type')) {
                   case 'checkbox':
                     if (element.checked == inputs[p].values) {
-                      parent.classList.remove('sbp_no_show');
+                      parent.classList.remove('awm_no_show');
                       return true;
                     }
                     break;
                 }
                 break;
             }
-            parent.classList.add('sbp_no_show');
+            parent.classList.add('awm_no_show');
 
           });
           element.dispatchEvent(event);
