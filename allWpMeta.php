@@ -26,6 +26,7 @@ function all_wp_meta_load_textdomain()
 
 require_once 'languages/strings.php';
 require_once 'inc/main.php';
+require_once 'inc/gallery-meta-box/gallery-meta-box.php';
 
 add_action('wp_loaded', function () {
     wp_register_style('awm-slim-lib-style', 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.18.10/slimselect.min.css', false, '1.0.0');

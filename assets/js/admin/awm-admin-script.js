@@ -60,7 +60,7 @@ jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 jQuery(document).on('click', '.awm_custom_image_upload_image_button', function (e) {
   e.preventDefault();
   var id = jQuery(this).closest('.awm-image-upload').attr('id');
-  var button = $(this),
+  var button = jQuery(this),
     custom_uploader = wp.media({
       title: jQuery('#' + id).attr('data-add_label'),
       library: {
@@ -74,7 +74,7 @@ jQuery(document).on('click', '.awm_custom_image_upload_image_button', function (
       multiple: jQuery('#' + id).attr('data-multiple') // for multiple image selection set to true
     }).on('select', function () { // it also has "open" and "close" events 
       var attachment = custom_uploader.state().get('selection').first().toJSON();
-      $(button).removeClass('button').html('<img class="true_pre_image" src="' + attachment.url + '" style="max-width:95%;display:block;" />').next().val(attachment.id).next().show();
+      jQuery(button).removeClass('button').html('<img class="true_pre_image" src="' + attachment.url + '" style="max-width:95%;display:block;" />').next().val(attachment.id).next().show();
       /* if you sen multiple to true, here is some code for getting the image IDs*/
       if (jQuery('#' + id).attr('data-multiple')) {
         var attachments = frame.state().get('selection'),

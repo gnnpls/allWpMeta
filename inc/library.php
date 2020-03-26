@@ -495,7 +495,7 @@ function awm_custom_meta_update_vars($meta, $metaa, $id, $view)
 
 function awm_custom_image_image_uploader_field($name, $id, $value = '', $multiple = false, $required = '')
 {
-    $image = ' button">' . sbp_Upload_image;
+    $image = ' button">' . __('Upload image','all-wp-meta');
     $image_size = 'full'; // it would be better to use thumbnail size here (150x150 or so)
     $display = 'none'; // display state ot the "Remove image" button
 
