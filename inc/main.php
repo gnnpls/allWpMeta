@@ -65,3 +65,40 @@ if (!function_exists('awmPostFieldsForInput'))
         return apply_filters('wibeeHotspots_filter', $options,$postType,$number,$defaultArgs);
     }
 }
+
+
+/**
+ * function to get the posts of a post type
+ * @param string $taxonomy wordpres taxonomy name
+ * @param int $number the number of posts to show
+ * @param array $args array for the get_posts function
+ * 
+ */
+if (!function_exists('awmTaxonomyFieldsForInput'))
+{
+    function awmTaxonomyFieldsForInput($taxonomy='',$number='-1',$args=array())
+    {
+        $options = array();
+        $defaultArgs = array(
+            'taxonomy'      => $taxonomy, // taxonomy name
+            'orderby'       => 'id', 
+            'order'         => 'ASC',
+            'hide_empty'    => false,
+            'fields'        => 'all'
+        );
+        if (!empty($args))
+        {
+            foreach ($args as $argKey=>$argValue)
+            {
+                $defaultArgs[$argKey]=$argValue;
+            }
+        }
+        $content = get_terms($defaultArgs);
+        if (!empty($content)) {
+            foreach ($content as $data) {
+                $options[$data->term_id] = array('label' => $data->name);
+            }
+        }
+        return apply_filters('awmTaxonomyFieldsForInput_filter', $options,$taxonomy,$number,$defaultArgs);
+    }
+}
