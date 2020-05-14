@@ -430,6 +430,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         case 'user':
                             /*user view*/
                             $msg[] = '<tr data-input="' . $original_meta_id . '"><th class="' . implode(' ', $label_class) . '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '"><label for="' . $original_meta_id . '" class="awm-input-label">' . $a['label'] . '</label></th>';
+                            $msg[] = '<td>' . $ins . '</td></tr>';
                             break;
                         default:
                             $label_class[] = 'awm-meta-field';                            
@@ -462,11 +463,59 @@ function awm_save_custom_meta($data, $dataa, $id, $view = 'post', $postType = ''
 {
     if (isset($data) && !empty($data)) {
         $arr = awm_custom_meta_update_vars($data, $dataa, $id, $view);
-        do_action('awm_custom_meta_update_action', $data, $dataa, $id, $view, $postType);
+        /*check for translation */        
 
+        do_action('awm_custom_meta_update_action', $data, $dataa, $id, $view, $postType);
+        awm_auto_translate($data,$dataa,$id,$view);
         return $arr;
     }
 }
+
+function awm_auto_translate($data,$dataa,$id,$view)
+{
+    /*wpml check*/
+    $autoTranslate=array();
+    if (isset($dataa['awm_metabox']) && !empty($dataa['awm_metabox']))
+    {
+        
+        foreach ($dataa['awm_metabox'] as $metabox)
+        {
+            $metaboxData=awm_get_metabox_info($metabox);
+            if (isset($metaboxData['auto-translate']) && $metaboxData['auto-translate'])
+            {
+                $autoTranslate[$metabox]=$metaboxData['library'];
+            }
+        }
+        if (!empty($autoTranslate))
+        {
+            if ( function_exists('icl_object_id') ) {
+            global $sitepress;
+            foreach ($autoTranslate as $library_key=>$library_data) {                    
+            $ids = awm_translated_ids($id);
+            if (!empty($ids) && isset($ids['original'])) {
+                if (!empty($ids) && isset($ids['original'])) {
+                $original = $ids['original'];
+                unset($ids['original']);
+                $fields = apply_filters('awm_auto_translate_fields',$library_data,$library_key);
+                foreach ($fields as $key => $data) {
+                $meta = get_post_meta($original, $key, 'true') ?: '';
+                foreach ($ids as $id) {
+                    if ($meta != '') {
+                        update_post_meta($id, $key, $meta);
+                    } else {
+                        delete_post_meta($id, $key);
+                    }
+                }
+            }
+        }
+    }
+}
+            }
+        }
+    }
+    return ;
+}
+
 
 function awm_custom_meta_update_vars($meta, $metaa, $id, $view)
 {
@@ -545,6 +594,44 @@ function awm_custom_image_image_uploader_field($name, $id, $value = '', $multipl
 	</div>';
 }
 
+function awm_get_metabox_info($id)
+{
+    if ($id)
+    {
+    $metaBoxes = apply_filters('awm_add_meta_boxes_filter', array());
+    return isset($metaBoxes[$id]) ? $metaBoxes[$id] : array();
+    }
+    return array();
+}
+
+
+
+if (!function_exists('awm_translated_ids')) {
+    function awm_translated_ids($post_id)
+    {
+        global $sitepress;
+        $default = $sitepress->get_default_language();
+        $ids = array();
+        if ($default != ICL_LANGUAGE_CODE) {
+            $original_id = (int) icl_object_id($post_id, get_post_type(), true, $default);
+            /*get custom fields*/
+            $ids[] = $post_id;
+        } else {
+            $original_id = $post_id;
+            $trid = $sitepress->get_element_trid($post_id);
+            $translations = $sitepress->get_element_translations($trid);
+            if (!empty($translations)) {
+                unset($translations[$default]);
+                foreach ($translations as $lan => $tran) {
+                    $ids[] = $tran->element_id;
+                }
+            }
+        }
+        $ids['original'] = $original_id;
+
+        return apply_filters('awm_translated_ids_filter', $ids);
+    }
+}
 
 function awm_display_meta_value($meta, $data, $postId)
 {

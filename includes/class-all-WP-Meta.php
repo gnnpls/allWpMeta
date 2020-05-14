@@ -9,9 +9,9 @@ class all_WP_Meta
     public function __construct()
     {
             
-            require_once 'includes/gallery-meta-box/gallery-meta-box.php';
+            require_once awm_path.'/includes/gallery-meta-box/gallery-meta-box.php';
             require_once awm_path.'/languages/strings.php';
-            require_once 'includes/main.php';
+            require_once awm_path.'/includes/main.php';
 
             add_action('plugins_loaded', function(){
                 load_plugin_textdomain('all-wp-meta', false, awm_path . '/languages/');
@@ -72,8 +72,9 @@ class all_WP_Meta
                 add_meta_box($metaBoxKey,
                     $metaBoxData['title'], // $title
                     function ($post) use ($metaBoxData) {
-                        $view=isset($metaBoxData['view']) ? $metaBoxData['view'] : '';
+                        $view=isset($metaBoxData['view']) ? $metaBoxData['view'] : 'post';
                         echo apply_filters('awm_add_meta_boxes_filter_content', awm_show_content($metaBoxData['library'], $post->ID,$view), $metaBoxData['id']);
+                        echo '<input type="hidden" name="awm_metabox[]" value="'.$metaBoxData['id'].'"/>';
                     },
                     $metaBoxData['postTypes'], // $page
                     $metaBoxData['context'], // $context
