@@ -3,7 +3,7 @@
 Plugin Name: all WP Meta
 Plugin URI: https://gnnpls.com
 Description: Add html input meta for admin and frontend using php
-Version: 1
+Version: 2
 Author: Giannopoulos Nikolaos
 Author URI: https://gnnpls.com
 Text Domain:       all-wp-meta
@@ -17,37 +17,5 @@ if (!defined('WPINC')) {
 
 define('awm_path', plugin_dir_path(__FILE__));
 define('awm_url', plugin_dir_url(__FILE__));
+require 'includes/class-all-WP-Meta.php';
 
-add_action('plugins_loaded', 'all_wp_meta_load_textdomain');
-function all_wp_meta_load_textdomain()
-{
-    load_plugin_textdomain('all-wp-meta', false, dirname(plugin_basename(__FILE__)).'/languages/');
-}
-
-require_once 'languages/strings.php';
-require_once 'inc/main.php';
-require_once 'inc/gallery-meta-box/gallery-meta-box.php';
-
-add_action('wp_loaded', function () {
-    wp_register_style('awm-slim-lib-style', 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.18.10/slimselect.min.css', false, '1.0.0');
-    wp_register_style('awm-global-style', awm_url.'assets/css/global/awm-global-style.min.css', false, '1.0.0');
-    wp_register_style('awm-admin-style', awm_url.'assets/css/admin/awm-admin-style.min.css', false, '1.0.0');
-    wp_register_script('awm-global-script', awm_url.'assets/js/global/awm-global-script.js', array(), false, true);
-    wp_localize_script('awm-global-script', 'awmGlobals', array('url' => esc_url(site_url())));
-    wp_register_script('awm-admin-script', awm_url.'assets/js/admin/awm-admin-script.js', array(), false, true);
-    wp_register_script('awm-slim-lib-script', 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.18.10/slimselect.min.js', array(), false, true);
-}, 10, 1);
-
-add_action('wp_enqueue_scripts', function () {
-    wp_enqueue_style('awm-global-style');
-    wp_enqueue_script('awm-global-script');
-}, 100);
-
-add_action('admin_enqueue_scripts', function () {
-    wp_enqueue_style('awm-slim-lib-style');
-    wp_enqueue_style('awm-admin-style');
-    wp_enqueue_style('awm-global-style');
-    wp_enqueue_script('awm-slim-lib-script');
-    wp_enqueue_script('awm-global-script');
-    wp_enqueue_script('awm-admin-script');
-}, 100);

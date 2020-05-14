@@ -4,6 +4,16 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
+
+if (!function_exists('awm_show_content'))
+{
+/**
+ * this is the function which is responsible to display the custom inputs for metaboxes/options
+ * @param array $arrs the array with the inputs
+ * @param array $id the post_id,term_id
+ * @param array $view which source to use to load the data
+ */
 function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $label = true, $specific = '', $sep = ', ')
 {
     $msg = array();
@@ -16,8 +26,6 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
         if (substr($n, 0, 1) === '_') {
             $n = ltrim($n, '_');
         }
-        /*check for role*/
-
         if (($n == $specific && $specific != '') || $specific == '') {
             $show = isset($a['show']) ? $a['show'] : 1;
             $stop = 0;
@@ -40,14 +48,19 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         $a['case'] = 'input';
                         $a['type'] = 'text';
                         $a['class'][] = 'awm_cl_date';
-
                     break;
+                    case 'html':
+                        if (isset($a['value']) && !empty($a['value']))
+                        {
+                        return '<div class="awm-meta-html" id="' . $n . '">'.$a['value'].'</div>';
+                        }
+                        break;
                     default:
                     break;
                 }
 
                 /*make changes for combined inputs*/
-                $label_class = $extra_fields2 = array();
+                $label_class = $extra_fields2 = $label_attrs=array();
                 $extraa = '';
                 $class = isset($a['class']) ? implode(' ', $a['class']) : '';
                 switch ($view) {
@@ -64,6 +77,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         $val = 0;
                         break;
                 }
+                $val=apply_filters('awm_show_content_value_filter',$val,$id,$original_meta,$view);
                 
 
 
@@ -85,6 +99,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                     unset($a['attributes']['id']);
                 }
                 $label_class[] = $a['case'];
+
                 $label_class = apply_filters('awm_label_class_filter', $label_class, $a, $required);
                 if (in_array('awm-needed', $label_class)) {
                     $required = '';
@@ -138,7 +153,6 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
 
                         if ($d == 1) {
                             $label_class[] = 'awm_no_show';
-
                             $ins .= '<div class="ss1">' . $a['label'] . '</div><div class="ss2" id="' . $n . '">' . $val . '</div>';
                         } else {
                             $msg[$n] = array('value' => $val, 'label' => $a['label']);
@@ -171,8 +185,14 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 }
                             }
                         }
+
+                        if (isset($a['show-when']) && !empty($a['show-when']) && is_array($a['show-when'])) {
+                            $label_attrs[] = 'show-when="' . str_replace('"', '\'', json_encode($a['show-when'])) . '"';
+                        }
+
                         $extraa .= isset($extra_fields2) ? implode(' ', $extra_fields2) : '';
                         switch ($a['case']) {
+                            
                             case 'message':
                                 if (isset($a['value']) && !empty($a['value'])) {
                                     $ins = '<div class="awm-meta-message" id="' . $original_meta_id . '"><div class="awm-meta-message-label">' . $a['label'] . '</div><div class="awm-meta-message-inner">' . $a['value'] . '</div></div>';
@@ -207,15 +227,22 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 break;
                             case 'checkbox_multiple':
                                 $ins .= '<label><span>' . $a['label'] . '</span></label>';
-
-                                foreach ($a['options'] as $dlm => $dlmm) {
-                                    $chk_ex = '';
-                                    if (is_array($val) && in_array($dlm, $val)) {
-                                        $chk_ex = ' checked';
+                                $checkboxOptions = array();
+                                if (isset($a['options']) && !empty($a['options'])) {
+                                    $checkboxOptions['awm_apply_all'] = array('label' => __('Select All', 'all-wp-meta'), 'extra_label' => __('Deselect All', 'all-wp-meta'));
+                                    $checkboxOptions = $checkboxOptions + $a['options'];
+                                    foreach ($checkboxOptions as $dlm => $dlmm) {
+                                        $chk_ex = '';
+                                        if (is_array($val) && in_array($dlm, $val)) {
+                                            $chk_ex = ' checked';
+                                        }
+                                        $value_name = $dlm != 'amw_apply_all' ? $original_meta . '[]' : '';
+                                        $extraLabel = ($dlm == 'awm_apply_all' && isset($dlmm['extra_label'])) ? 'data-extra="' . $dlmm['extra_label'] . '"' : '';
+                                        $valueInside = $dlm != 'awm_apply_all' ? $dlm : '';
+                                        $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><input type="checkbox" name="' . $value_name . '" id="' . $original_meta_id . '_' . $dlm . '" value="' . $valueInside . '" ' . $extraa . $chk_ex . ' class="' . $class . '"' . $extraLabel . ' data-value="' . $dlm . '"/><label id="label_' . $original_meta_id . '_' . $dlm . '" for="' . $original_meta_id . '_' . $dlm . '" class="awm-input-label" ><span>' . $dlmm['label'] . '</span></label></div></div>';
                                     }
-                                    $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><input type="checkbox" name="' . $original_meta . '[]" id="' . $original_meta_id . '_' . $dlm . '" value="' . $dlm . '" ' . $extraa . $chk_ex . ' class="' . $class . '"/><label for="' . $original_meta_id . '_' . $dlm . '" class="awm-input-label"><span>' . $dlmm['label'] . '</span></label></div></div>';
+                                    $n = $n . '[]';
                                 }
-                                $n = $n . '[]';
                                 break;
                             case 'select':
                                 if ($val != '' && !is_array($val)) {
@@ -269,7 +296,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 }
 
                                 break;
-                            case 'radio':
+                             case 'radio':
                                 foreach ($a['options'] as $vkey => $valll) {
                                     $chk = '';
                                     if ($vkey == $val) {
@@ -324,7 +351,6 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 }
 
                                 break;
-
                             case 'map':
                                 $label_class[] = 'awm-cls-100';
                                 $lat = (isset($val['lat']) && !empty($val['lat'])) ? $val['lat'] : '';
@@ -341,17 +367,15 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     $ins .= '<div class="awm-repeater" data-count="' . count($a['include']) . '" data-id="' . $original_meta_id . '" maxrows="' . $maxrows . '">';
                                     $ins .= '<div class="awm-repeater-title">' . $a['label'] . '</div>';
                                     $ins .= '<div class="awm-repeater-contents">';
-
-                                    $val = !empty($val) ? array_values($val) : array();
-
+                                    $val = !empty($val) ? array_values(maybe_unserialize($val)) : array();
                                     if ((empty($val)) && isset($a['prePopulated'])) {
                                         $val = $a['prePopulated'];
                                     }
-
                                     $counter = !empty($val) ? count($val) : 1;
                                     for ($i = 0; $i < $counter; ++$i) {
                                         $ins .= '<div class="awm-repeater-content" data-counter="' . $i . '">';
                                         foreach ($a['include'] as $key => $data) {
+                                            $data['attributes']=isset($a['attributes']) ? $a['attributes'] : array();
                                             $inputname = $original_meta . '[' . $i . '][' . $key . ']';
                                             if (isset($val[$i][$key])) {
                                                 $data['attributes']['value'] = $val[$i][$key];
@@ -359,6 +383,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                             $data['attributes']['exclude_meta'] = true;
 
                                             $data['attributes']['id'] = str_replace(']', '_', str_replace('[', '_', $original_meta)) . '_' . $i . '_' . $key;
+                                            $data['attributes']['input-name']=$original_meta;
                                             $ins .= awm_show_content(array($inputname => $data));
                                         }
                                         $item = isset($a['item_name']) ? $a['item_name'] : awm_Roww;
@@ -375,7 +400,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                             default:
                                 break;
                         }
-                        if ($label && !(isset($a['attributes']['exclude_meta'])) && $view != 'none' && !isset($a['attributes']['disabled'])) {
+                       if ($label && !(isset($a['attributes']['exclude_meta'])) && $view != 'none' && !isset($a['attributes']['disabled'])) {
                             $ins .= '<input type="hidden" name="awm_custom_meta[]" value="' . $original_meta . '"/>';
                         }
 
@@ -383,6 +408,9 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                 }
 
                 if ($stop != 1 && isset($n)) {
+                    $label_class[] = 'awm-meta-field';
+                    $labelClass=implode(' ',$label_class);
+                    $labelAttrs=implode(' ',$label_attrs);
                     switch ($view) {
                         case 'none':
                             /*fronted view*/
@@ -391,10 +419,10 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         case 'term':
                             switch ($id) {
                                 case 0:
-                                    $msg[] = '<div class="form-field term-group awm-term-meta-row">' . $ins . '</div>';
+                                    $msg[] = '<div class="form-field term-group awm-term-meta-row ' .$labelClass. '" '.$labelAttrs.'>' . $ins . '</div>';
                                     break;
                                 default:
-                                    $msg[] = '<tr class="form-field term-group-wrap" data-input="' . $original_meta_id . '"><th scope="row" class="' . implode(' ', $label_class) . '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '"><label for="' . $original_meta_id . '" class="awm-input-label">' . $a['label'] . '</label></th><td class="awm-term-input">' . $ins . '</td></tr>';
+                                    	$msg[] = '<tr class="form-field term-group-wrap" data-input="' . $original_meta_id . '"><th scope="row" class="' . implode(' ', $label_class) . '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '"><label for="' . $original_meta_id . '" class="awm-input-label">' . $a['label'] . '</label></th><td class="awm-term-input">' . $ins . '</td></tr>';
                                     break;
                             }
 
@@ -402,11 +430,10 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         case 'user':
                             /*user view*/
                             $msg[] = '<tr data-input="' . $original_meta_id . '"><th class="' . implode(' ', $label_class) . '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '"><label for="' . $original_meta_id . '" class="awm-input-label">' . $a['label'] . '</label></th>';
-                            $msg[] = '<td>' . $ins . '</td></tr>';
                             break;
                         default:
-                            $label_class[] = 'awm-meta-field';
-                            $msg[] = '<div class="' . implode(' ', $label_class) . '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '">';
+                            $label_class[] = 'awm-meta-field';                            
+                            $msg[] = '<div class="' . implode(' ', $label_class). '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '" '.$labelAttrs.'>';
                             $msg[] = $ins;
                             if (is_admin() && isset($a['information']) && !empty($a['information'])) {
                                 $msg[] = '<div class="sbp-tippy-admin-message"><span class="sbp_icon sbp-icon-gps" data-message="' . $a['information'] . '"></span></div>';
@@ -428,6 +455,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
     }
 
     return $msg;
+}
 }
 
 function awm_save_custom_meta($data, $dataa, $id, $view = 'post', $postType = '')
@@ -517,32 +545,29 @@ function awm_custom_image_image_uploader_field($name, $id, $value = '', $multipl
 	</div>';
 }
 
-function awm_add_meta_boxes($postType, $post)
+
+function awm_display_meta_value($meta, $data, $postId)
 {
-    $metaBoxes = apply_filters('awm_add_meta_boxes_filter', array());
-    if (!empty($metaBoxes)) {
-        wp_enqueue_media();
-        foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {
-            if (isset($metaBoxData['library']) && !empty($metaBoxData['library'])) {
-                $metaBoxData['id'] = $metaBoxKey;
-                add_meta_box($metaBoxKey,
-                    $metaBoxData['title'], // $title
-                    function ($post) use ($metaBoxData) {
-                        echo apply_filters('awm_add_meta_boxes_filter_content', awm_show_content($metaBoxData['library'], $post->ID), $metaBoxData['id']);
-                    },
-                    $metaBoxData['postTypes'], // $page
-                    $metaBoxData['context'], // $context
-                    $metaBoxData['priority']
-                ); // $priority
-            }
+    $value = get_post_meta($postId, $meta, 'true');
+        switch ($data['case']) {
+            case 'postType':
+                $value=get_the_title($value);
+                break;  
+            case 'message':
+            case 'html':
+                $value=isset($data['value']) ? $data['value'] : '';
+            break;
+            case 'select':
+            case 'checkbox_mutliple':
+                if (array_key_exists($value, $data['options'])) {
+                    $value = $data['options'][$value]['label'];
+                }
+                break;
         }
-    }
+
+    return apply_filters('awm_display_meta_value_filter',$value,$meta,$data,$postId);
 }
 
-if (is_admin()) {
-    add_action('add_meta_boxes', 'awm_add_meta_boxes', 10, 2);
-    add_action('admin_init', 'awm_admin_post_columns');
-}
 
 function awm_admin_post_columns()
 {
@@ -617,22 +642,3 @@ function awm_admin_post_columns()
     }
 }
 
-function awm_display_meta_value($meta, $data, $postId)
-{
-    $value = get_post_meta($postId, $meta, 'true');
-    if (!empty($value)) {
-        switch ($data['case']) {
-            case 'select':
-            case 'checkbox_mutliple':
-                if (array_key_exists($value, $data['options'])) {
-                    $value = $data['options'][$value]['label'];
-                }
-                break;
-            case 'postType':
-                $value=get_the_title($value);
-                break;    
-        }
-    }
-
-    return $value;
-}
