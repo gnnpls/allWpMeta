@@ -42,31 +42,31 @@ function awm_js_ajax_call(url, js_callback) {
  request.send();
 }
 
-function awmCallbacks(){
-var elems = document.querySelectorAll('input[data-callback],select[data-callback],textarea[data-callbak]');
-if (elems) {
- elems.forEach(function (elem) {
-  awm_check_call_back(elem);
-  elem.addEventListener("change", function () {
-    awm_check_call_back(elem);
-  });
- 
- 
- });
-}
+function awmCallbacks() {
+  var elems = document.querySelectorAll('input[data-callback],select[data-callback],textarea[data-callbak]');
+  if (elems) {
+    elems.forEach(function (elem) {
+      awm_check_call_back(elem, false);
+      elem.addEventListener("change", function () {
+        awm_check_call_back(elem, true);
+      });
+
+
+    });
+  }
 }
  
 
-function awm_check_call_back(elem) {
+function awm_check_call_back(elem, action) {
   var call_back = window[elem.getAttribute('data-callback')];
 
   if (typeof call_back == 'function') {
-   call_back();
+    call_back(elem, action);
 
   } else {
-   console.log(elem.getAttribute('data-callback') + ' function does not exist!');
+    console.log(elem.getAttribute('data-callback') + ' function does not exist!');
   }
- }
+}
 
 
 function awmInitForms() {
@@ -144,25 +144,22 @@ function awmCheckValidation(form) {
 
 
 function awmShowInputs() {
-  var elems = document.querySelectorAll('input[showWhen],select[showWhen],textarea[showWhen]');
-
+  var elems = document.querySelectorAll('div[show-when]');
   if (elems) {
     var event = new Event('change');
     elems.forEach(function (elem) {
-      var parent = elem.parentNode;
-      var inputs = JSON.parse(elem.getAttribute('showWhen').replace(/\'/g, '\"'));
-      if (parent.classList.contains('insider')) {
-        parent = parent.parentNode.parentNode;
-      }
+      var parent = elem;
+      var inputs = JSON.parse(elem.getAttribute('show-when').replace(/\'/g, '\"'));
       for (var p in inputs) {
-        if (inputs.hasOwnProperty(p)) {
-          var element = document.getElementById(p);
+        var element = document.getElementById(p);
+        if (element) {
           element.addEventListener('change', function () {
             switch (element.tagName) {
               case 'SELECT':
                 if (this.value in inputs[p].values) {
                   if (inputs[p].values[this.value]) {
                     parent.classList.remove('awm_no_show');
+
                     return true;
                   }
                 }
@@ -183,7 +180,6 @@ function awmShowInputs() {
           });
           element.dispatchEvent(event);
         }
-
       }
 
     });

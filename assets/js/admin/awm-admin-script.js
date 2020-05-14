@@ -46,6 +46,7 @@ jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
     }
   } else {
     jQuery(this).closest('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content').remove();
+    jQuery(this).closest('.awm-repeater[data-id="' + repeater + '"] input,.awm-repeater[data-id="' + repeater + '"] select,.awm-repeater[data-id="' + repeater + '"] textarea').trigger('change');
   }
 
 });
@@ -263,6 +264,7 @@ function repeaterInit(){
   awm_create_calendar();
   awmSelectrBoxes();
   awmInitForms();
+  awmCallbacks();
 }
 
 
