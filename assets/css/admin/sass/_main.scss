@@ -13,6 +13,11 @@
  position: relative;
  box-sizing: border-box;
 
+ &[data-input="html"] {
+  display: block;
+  width: 100%;
+ }
+
  &.awm-section-field {
   border-bottom: solid 1px !important;
 
@@ -104,6 +109,7 @@
  }
 
  *:not(.ss-main),
+ *:not(.awm-meta-html),
  *:not(.awm-after-message),
  *:not(.awm-map),
  *:not(.ss-arrow),
@@ -156,6 +162,8 @@
   &.mce-edit-area.mce-container {
    width: 100% !important;
   }
+
+
  }
 
  /*custom select rules*/
