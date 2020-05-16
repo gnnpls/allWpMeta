@@ -78,7 +78,6 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         break;
                 }
                 $val=apply_filters('awm_show_content_value_filter',$val,$id,$original_meta,$view);
-                
 
 
                 if (isset($a['label_class']) && !empty($a['label_class'])) {
@@ -272,6 +271,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                                 $attrs[] = $lp . '="' . $ld . '"';
                                             }
                                         }
+                                        $option_label=isset($vvv['label']) ? $vvv['label'] : $vv;
                                         $ins .= '<option value="' . $vv . '" ' . $selected . ' ' . implode(' ', $attrs) . '>' . $vvv['label'] . '</option>';
                                     }
                                 }
@@ -375,7 +375,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     for ($i = 0; $i < $counter; ++$i) {
                                         $ins .= '<div class="awm-repeater-content" data-counter="' . $i . '">';
                                         foreach ($a['include'] as $key => $data) {
-                                            $data['attributes']=isset($a['attributes']) ? $a['attributes'] : array();
+                                            $data['attributes']=isset($data['attributes']) ? $data['attributes'] : array();
                                             $inputname = $original_meta . '[' . $i . '][' . $key . ']';
                                             if (isset($val[$i][$key])) {
                                                 $data['attributes']['value'] = $val[$i][$key];
@@ -463,8 +463,7 @@ function awm_save_custom_meta($data, $dataa, $id, $view = 'post', $postType = ''
 {
     if (isset($data) && !empty($data)) {
         $arr = awm_custom_meta_update_vars($data, $dataa, $id, $view);
-        /*check for translation */        
-
+        /*check for translation */      
         do_action('awm_custom_meta_update_action', $data, $dataa, $id, $view, $postType);
         awm_auto_translate($data,$dataa,$id,$view);
         return $arr;
