@@ -577,8 +577,8 @@ function awm_custom_meta_update_vars($meta, $metaa, $id, $view)
 
 function awm_custom_image_image_uploader_field($name, $id, $value = '', $multiple = false, $required = '')
 {
-    $image = ' button">' . __('Upload image','all-wp-meta');
-    $image_size = 'full'; // it would be better to use thumbnail size here (150x150 or so)
+    $image = ' button">' .  __('Insert media', 'all-wp-meta');
+    $image_size = 'large'; // it would be better to use thumbnail size here (150x150 or so)
     $display = 'none'; // display state ot the "Remove image" button
 
     if ($image_attributes = wp_get_attachment_image_src($value, $image_size)) {
@@ -586,10 +586,10 @@ function awm_custom_image_image_uploader_field($name, $id, $value = '', $multipl
         $display = 'inline-block';
     }
 
-    return '<div class="awm-image-upload" id="awm_image' . $id . '"data-multiple="' . $multiple . '" data-add_label="' . sbp_Insert_image . '" data-remove_label="' . sbp_Remove_images . '">
+    return '<div class="awm-image-upload" id="awm_image' . $id . '"data-multiple="' . $multiple . '" data-add_label="' . __('Insert media', 'all-wp-meta') . '" data-remove_label="' . __('Remove media', 'all-wp-meta') . '">
 		<a href="#" class="awm_custom_image_upload_image_button' . $image . '</a>
 		<input type="hidden" name="' . $name . '" id="' . $id . '" value="' . $value . '" ' . $required . '/>
-		<a href="#" class="awm_custom_image_remove_image_button" style="display:inline-block;display:' . $display . '">Remove image</a>
+		<a href="#" class="awm_custom_image_remove_image_button" style="display:inline-block;display:' . $display . '">'.__('Remove media', 'all-wp-meta').'</a>
 	</div>';
 }
 
