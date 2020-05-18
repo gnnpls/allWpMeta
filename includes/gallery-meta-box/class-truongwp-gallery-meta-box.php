@@ -170,7 +170,7 @@ class Truongwp_Gallery_Meta_Box
      */
     protected function post_types()
     {
-        $post_types = array('post');
+        $post_types = array();
 
         /*
          * Filters supported post types.
