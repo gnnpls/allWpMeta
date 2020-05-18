@@ -78,19 +78,13 @@ class all_WP_Meta
                     },
                     $metaBoxData['postTypes'], // $page
                     $metaBoxData['context'], // $context
-                    $metaBoxData['priority']
-                ); // $priority
+                    $metaBoxData['priority'] // $priority
+                ); 
             }
         }
     }
-
     }
 
-    
-
-
 }
-
-
 new all_WP_Meta();
 

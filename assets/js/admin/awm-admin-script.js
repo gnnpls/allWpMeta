@@ -108,7 +108,7 @@ var awm_map_options = [];
 function awm_add_map() {
   var map = document.getElementsByClassName("awm_map");
 
-  if (typeof (map) != 'undefined' && map != null && typeof (awmGlobals) != 'undefined' && awmGlobals != null) {
+  if (typeof (map) != 'undefined' && map != null && map.length > 0 && typeof (awmGlobals) != 'undefined' && awmGlobals != null) {
     awm_js_ajax_call(awmGlobals.url + '/wp-json/all-wp-meta/awm-map-options/', 'awm_call_maps_api');
   }
 }
