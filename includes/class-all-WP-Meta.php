@@ -55,7 +55,6 @@ class all_WP_Meta
      */
     protected function meta_boxes()
     {
-        
         return apply_filters('awm_add_meta_boxes_filter',array());
     }
 
