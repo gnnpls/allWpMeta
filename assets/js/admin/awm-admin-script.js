@@ -66,11 +66,11 @@ jQuery(document).on('click', '.awm_custom_image_upload_image_button', function (
       title: jQuery('#' + id).attr('data-add_label'),
       library: {
         // uncomment the next line if you want to attach image to the current post
-        // uploadedTo : wp.media.view.settings.post.id, 
-        type: 'image'
+        uploadedTo : wp.media.view.settings.post.id, 
+        type: ['video', 'image', 'application/pdf']
       },
       button: {
-        text: 'Use this image' // button label text
+        text: 'Use this media' // button label text
       },
       multiple: jQuery('#' + id).attr('data-multiple') // for multiple image selection set to true
     }).on('select', function () { // it also has "open" and "close" events 
@@ -95,7 +95,7 @@ jQuery(document).on('click', '.awm_custom_image_upload_image_button', function (
  * Remove image event
  */
 jQuery(document).on('click', '.awm_custom_image_remove_image_button', function () {
-  jQuery(this).hide().prev().val('').prev().addClass('button').html('Upload image');
+  jQuery(this).hide().prev().val('').prev().addClass('button').html('Insert media');
   return false;
 });
 /*awm settings*/

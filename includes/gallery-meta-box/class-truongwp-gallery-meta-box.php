@@ -6,6 +6,7 @@
 /**
  * Class Truongwp_Gallery_Meta_Box.
  */
+
 class Truongwp_Gallery_Meta_Box
 {
     public function init()
@@ -29,8 +30,7 @@ class Truongwp_Gallery_Meta_Box
         if (!$this->is_editing_screen()) {
             return;
         }
-
-        wp_enqueue_style('truongwp-gallery-meta-box', TRUONGWP_GALLERY_META_BOX_URL.'css/gallery-meta-box.css', array(), false);
+       wp_enqueue_style('truongwp-gallery-meta-box', TRUONGWP_GALLERY_META_BOX_URL.'css/gallery-meta-box.css', array(), false);
         wp_enqueue_script('truongwp-gallery-meta-box', TRUONGWP_GALLERY_META_BOX_URL.'js/gallery-meta-box.js', array('backbone', 'jquery'), false, true);
     }
 

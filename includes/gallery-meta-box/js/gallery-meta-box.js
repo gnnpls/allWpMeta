@@ -32,7 +32,6 @@
 					type: 'image'
 				}
 			} );
-
 			this._frame.on( 'open', this.open );
 
 			this._frame.state( 'library' ).on( 'select', this.select );

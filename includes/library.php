@@ -580,8 +580,8 @@ function awm_custom_image_image_uploader_field($name, $id, $value = '', $multipl
     $image = ' button">' .  __('Insert media', 'all-wp-meta');
     $image_size = 'large'; // it would be better to use thumbnail size here (150x150 or so)
     $display = 'none'; // display state ot the "Remove image" button
-
-    if ($image_attributes = wp_get_attachment_image_src($value, $image_size)) {
+    if ($value) {
+        $image_attributes=wp_get_attachment_image_src($value, $image_size);
         $image = '"><img src="' . $image_attributes[0] . '"/>';
         $display = 'inline-block';
     }
