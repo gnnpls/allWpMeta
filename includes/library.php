@@ -44,6 +44,12 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmTaxonomyFieldsForInput($a['taxonomy'], $number, $args);
                     break;
+                    case 'user':
+                        $a['case'] = 'select';
+                        $number = isset($a['number']) ? $a['number'] : '-1';
+                        $args = isset($a['args']) ? $a['args'] : array();
+                        $a['options'] = awmUserFieldsForInput($a['roles'], $number, $args);
+                    break;
                     case 'date':
                         $a['case'] = 'input';
                         $a['type'] = 'text';

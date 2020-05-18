@@ -107,3 +107,38 @@ if (!function_exists('awmTaxonomyFieldsForInput'))
         return apply_filters('awmTaxonomyFieldsForInput_filter', $options,$taxonomy,$number,$defaultArgs);
     }
 }
+
+
+/**
+ * function to get the posts of a post type
+ * @param string $roles wordpres user roles
+ * @param int $number the number of users to show
+ * @param array $args array for the get_posts function
+ * 
+ */
+if (!function_exists('awmUserFieldsForInput'))
+{
+    function awmUserFieldsForInput($roles=array(),$number='-1',$args=array())
+    {
+        $options = array();
+        $defaultArgs = array(
+        'role__in' => $roles,
+        'orderby' => 'display_name'
+        );
+        
+        if (!empty($args))
+        {
+            foreach ($args as $argKey=>$argValue)
+            {
+                $defaultArgs[$argKey]=$argValue;
+            }
+        }
+        $content = get_users($defaultArgs);
+        if (!empty($content)) {
+            foreach ($content as $data) {
+                $options[$data->ID] = array('label' => $data->display_name);
+            }
+        }
+        return apply_filters('awmUserFieldsForInput_filter', $options,$roles,$number,$defaultArgs);
+    }
+}
