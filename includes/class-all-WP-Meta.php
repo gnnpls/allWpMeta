@@ -69,12 +69,14 @@ class all_WP_Meta
         return apply_filters('awm_add_term_meta_boxes_filter',array());
     }
 
+    /**
+     * add term meta boxes to taxonomies
+     */
     public function awm_add_term_meta_boxes()
     {
         global $pagenow;
         if (in_array($pagenow,array('edit-tags.php','term.php'))) {
         $metaBoxes = $this->term_meta_boxes();
-
         if (!empty($metaBoxes)) {
             foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {              
                 if (isset($metaBoxData['library']) && !empty($metaBoxData['library']) && isset($metaBoxData['taxonomies'])) {
