@@ -43,8 +43,9 @@ class all_WP_Meta
             
             });
             if (is_admin()){
-            add_action('add_meta_boxes', array($this,'awm_add_meta_boxes'),10,2);
+            add_action('add_meta_boxes', array($this,'awm_add_post_meta_boxes'),10,2);
             add_action('admin_init', 'awm_admin_post_columns');
+            add_action('admin_init',array($this,'awm_add_term_meta_boxes'),100);
             }            
     }
 
@@ -58,7 +59,47 @@ class all_WP_Meta
         return apply_filters('awm_add_meta_boxes_filter',array());
     }
 
-    public function awm_add_meta_boxes($postType,$post)
+    /**
+     * Get post types for this meta box.
+     *
+     * @return array
+     */
+    protected function term_meta_boxes()
+    {
+        return apply_filters('awm_add_term_meta_boxes_filter',array());
+    }
+
+    public function awm_add_term_meta_boxes()
+    {
+        global $pagenow;
+        if (in_array($pagenow,array('edit-tags.php','term.php'))) {
+        $metaBoxes = $this->term_meta_boxes();
+
+        if (!empty($metaBoxes)) {
+            foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {              
+                if (isset($metaBoxData['library']) && !empty($metaBoxData['library']) && isset($metaBoxData['taxonomies'])) {
+                    $metaBoxData['id']=$metaBoxKey;
+                    foreach ($metaBoxData['taxonomies'] as $taxonomy) {
+                        if (isset($_REQUEST['taxonomy']) && $_REQUEST['taxonomy']==$taxonomy) {                            
+                                add_action($taxonomy.'_add_form_fields', function ($term) use ($metaBoxData) {
+                                    echo '<input type="hidden" name="awm_metabox[]" value="'.$metaBoxData['id'].'"/>';
+                                    echo awm_show_content($metaBoxData['library'], 0, 'term');
+                                    });
+                                add_action($taxonomy.'_edit_form_fields', function ($term) use ($metaBoxData) {
+                                    echo '<input type="hidden" name="awm_metabox[]" value="'.$metaBoxData['id'].'"/>';
+                                    echo awm_show_content($metaBoxData['library'], $term->term_id, 'term');
+                                });
+                            }    
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    public function awm_add_post_meta_boxes($postType,$post)
     {
         
     $metaBoxes = $this->meta_boxes();
