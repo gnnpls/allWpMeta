@@ -640,8 +640,19 @@ if (!function_exists('awm_translated_ids')) {
 
 function awm_display_meta_value($meta, $data, $postId)
 {
-    $value = get_post_meta($postId, $meta, 'true');
+    $value = get_post_meta($postId, $meta, 'true') ?: false;
         switch ($data['case']) {
+            case 'input':
+                switch ($data['type'])
+                {
+                    case 'checkbox':
+                        $value= $value ? __('Yes','all-wp-meta') : __('No','all-wp-meta');
+                    break;
+                    default:
+                    break;
+                }
+                
+            break;
             case 'postType':
                 $value=get_the_title($value);
                 break;  
@@ -654,7 +665,7 @@ function awm_display_meta_value($meta, $data, $postId)
                 if (array_key_exists($value, $data['options'])) {
                     $value = $data['options'][$value]['label'];
                 }
-                break;
+            break;
         }
 
     return apply_filters('awm_display_meta_value_filter',$value,$meta,$data,$postId);
