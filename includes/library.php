@@ -303,12 +303,19 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
 
                                 break;
                              case 'radio':
+                                $optionsCounter=0;
                                 foreach ($a['options'] as $vkey => $valll) {
                                     $chk = '';
+                                    $labelRequired='';
                                     if ($vkey == $val) {
                                         $chk = 'checked="checked"';
                                     }
-                                    $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $required . '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label>';
+                                    if ($optionsCounter<1 && $required!='')
+                                    {
+                                        $labelRequired=$required;
+                                    }
+                                    $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label>';
+                                    $optionsCounter++;
                                 }
                                 break;
                             case 'section':

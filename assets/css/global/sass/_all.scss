@@ -1,11 +1,12 @@
-.awm-needed>label span::after {
+.awm-needed>label span:not(.awm-radio-label)::after {
  color: red;
  content: " *";
 }
+
 .awm-form-error.awm-meta-field {
  background: rgba(255, 0, 0, 0.2);
 }
 
-.awm_no_show{
- display:none !important;
+.awm_no_show {
+ display: none !important;
 }
