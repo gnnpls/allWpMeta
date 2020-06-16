@@ -16,7 +16,6 @@ class Truongwp_Gallery_Meta_Box
         foreach ($this->post_types() as $post_type) {
             add_action('save_post_'.$post_type, array($this, 'save'), 10, 3);
         }
-
         add_action('admin_enqueue_scripts', array($this, 'enqueue'));
 
         add_action('admin_footer', array($this, 'js_template'));
@@ -98,6 +97,7 @@ class Truongwp_Gallery_Meta_Box
 
         // Save data.
         if (isset($_POST['gallery_meta_box'])) {
+
             $value = array_map('absint', $_POST['gallery_meta_box']);
             update_post_meta($post_id, $this->meta_key(), $value);
         } else {

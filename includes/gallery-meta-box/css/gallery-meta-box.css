@@ -24,8 +24,10 @@
 
 .gallery-item img {
   max-width: 100%;
-  height: auto;
   display: block;
+  height:50px;
+  width:50px;
+
 }
 
 .gallery-placeholder {
