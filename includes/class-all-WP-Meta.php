@@ -46,8 +46,21 @@ class all_WP_Meta
             add_action('add_meta_boxes', array($this,'awm_add_post_meta_boxes'),10,2);
             add_action('admin_init', 'awm_admin_post_columns');
             add_action('admin_init',array($this,'awm_add_term_meta_boxes'),100);
+            add_action('admin_menu',array($this,'awm_add_options_page'),100);
+            add_action('admin_init',array($this,'awm_register_option_settings'),100);
             }            
     }
+
+    /**
+     * get all the registered options pages
+     *
+     * @return array
+     */
+    protected function options_boxes()
+    {
+        return apply_filters('awm_add_options_boxes_filter',array());
+    }
+
 
     /**
      * Get post types for this meta box.
@@ -68,6 +81,56 @@ class all_WP_Meta
     {
         return apply_filters('awm_add_term_meta_boxes_filter',array());
     }
+
+    /**
+     * register settings for the options
+     */
+    public function awm_register_option_settings()
+    {   
+        $optionsPages = $this->options_boxes();
+        if (!empty($optionsPages))
+        {
+            foreach ($optionsPages as $optionKey=>$optionData)
+            {
+                if (isset($optionData['library']) && !empty($optionData['library']))
+                {
+                    $args = array();
+                    $options = $optionData['library'];
+                    foreach ($options as $key => $data) {
+                        register_setting($optionKey, $key, $args);
+                    }
+                    add_filter('option_page_capability_'.$optionKey, function () {
+                        return 'edit_posts';
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * add options pages
+     */
+    public function awm_add_options_page()
+    {
+        global $pagenow;
+        $optionsPages = $this->options_boxes();
+        if (!empty($optionsPages))
+        {
+            foreach ($optionsPages as $optionKey=>$optionData)
+            {
+                $optionData['id']=$optionKey;
+                $parent=isset($optionData['parent']) ? $optionData['parent'] : 'options-general.php';
+                $cap=isset($optionData['cap']) ? $optionData['cap'] : 'manage_options';
+                $callback=isset($optionData['callback']) ? $optionData['callback'] : 'awm_options_callback';
+                global $awm_settings;
+                $awm_settings=$optionData;
+                add_submenu_page( $parent, $optionData['title'], $optionData['title'], $cap, $optionKey,$callback); 
+            }
+        }
+    }
+
+  
+
 
     /**
      * add term meta boxes to taxonomies

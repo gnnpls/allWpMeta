@@ -1,6 +1,5 @@
 ( function( $ ) {
 	"use strict";
-
 	var gallery = window.truongwpGallery = {
 
 		buttonId: '#truongwp-add-gallery',
@@ -50,7 +49,7 @@
 				var attachment = wp.media.attachment( ids[i] );
 				attachment.fetch();
 				selection.add( attachment );
-				// library.add( attachment ? [ attachment ] : [] );
+				library.add( attachment ? [ attachment ] : [] );
 			}
 		},
 

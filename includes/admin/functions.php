@@ -32,3 +32,12 @@ add_action('create_term', function ($term_id, $taxonomy) {
         $custom_meta = awm_save_custom_meta($_POST['awm_custom_meta'], $_POST, $term_id, 'term');
     }
 }, 10, 2);
+
+
+  /**
+     * add settings page for custom options
+     */
+    function awm_options_callback()
+    {
+        include  awm_path . 'includes/admin/settings.php';
+    }
