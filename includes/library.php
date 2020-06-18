@@ -33,19 +33,20 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                 switch ($a['case'])
                 {
                     case 'postType':
-                        $a['case'] = 'select';
+                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
+
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmPostFieldsForInput($a['post_type'], $number, $args);
                     break;
                     case 'term':
-                        $a['case'] = 'select';
+                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmTaxonomyFieldsForInput($a['taxonomy'], $number, $args);
                     break;
                     case 'user':
-                        $a['case'] = 'select';
+                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmUserFieldsForInput($a['roles'], $number, $args);
@@ -233,6 +234,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                             case 'checkbox_multiple':
                                 $ins .= '<label><span>' . $a['label'] . '</span></label>';
                                 $checkboxOptions = array();
+                                $ins.='<div class="awm-options-wrapper">';
                                 if (isset($a['options']) && !empty($a['options'])) {
                                     $checkboxOptions['awm_apply_all'] = array('label' => __('Select All', 'all-wp-meta'), 'extra_label' => __('Deselect All', 'all-wp-meta'));
                                     $checkboxOptions = $checkboxOptions + $a['options'];
@@ -248,6 +250,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     }
                                     $n = $n . '[]';
                                 }
+                                $ins.='</div>';
                                 break;
                             case 'select':
                                 if ($val != '' && !is_array($val)) {
