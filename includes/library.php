@@ -246,7 +246,8 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                         $value_name = $dlm != 'amw_apply_all' ? $original_meta . '[]' : '';
                                         $extraLabel = ($dlm == 'awm_apply_all' && isset($dlmm['extra_label'])) ? 'data-extra="' . $dlmm['extra_label'] . '"' : '';
                                         $valueInside = $dlm != 'awm_apply_all' ? $dlm : '';
-                                        $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><input type="checkbox" name="' . $value_name . '" id="' . $original_meta_id . '_' . $dlm . '" value="' . $valueInside . '" ' . $extraa . $chk_ex . ' class="' . $class . '"' . $extraLabel . ' data-value="' . $dlm . '"/><label id="label_' . $original_meta_id . '_' . $dlm . '" for="' . $original_meta_id . '_' . $dlm . '" class="awm-input-label" ><span>' . $dlmm['label'] . '</span></label></div></div>';
+                                        $input_id= $original_meta_id . '_' . $dlm .'_'.rand(10,100);
+                                        $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><label id="label_' .$input_id.'" for="'.$input_id.'" class="awm-input-label" ><input type="checkbox" name="' . $value_name . '" id="' .$input_id.'" value="' . $valueInside . '" ' . $extraa . $chk_ex . ' class="' . $class . '"' . $extraLabel . ' data-value="' . $dlm . '"/><span>' . $dlmm['label'] . '</span></label></div></div>';
                                     }
                                     $n = $n . '[]';
                                 }
