@@ -173,11 +173,18 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         if (isset($a['type'])) {
                             $label_class[] = $a['type'];
                         }
-
+                        
                         /*display input fields*/
                         if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'awm_tab') {
                             if ($label && $view != 'none') {
+                                
+                                if ($a['type']!='checkbox')
+                                {
                                 $ins .= '<label for="' . $original_meta_id . '" class="awm-input-label"><span>' . $label . '</span></label>';
+                                }
+                                else {
+                                   $ins .= '<label for="' . $original_meta_id . '" class="awm-input-label">';
+                                }
                             }
                         }
                         if (!empty($a['attributes']) && is_array($a['attributes'])) {
@@ -228,13 +235,10 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     default:
                                         break;
                                 }
-                                if ($a['type']!='checkbox')
+                                $ins .= '<input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/>' . $after_message;
+                                if ($a['type']=='checkbox')
                                 {
-                                    $ins .= '<input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/>' . $after_message;
-                                }
-                                else
-                                {
-                                    $ins .= '<label for="'.$original_meta_id .'"><input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/></label>' . $after_message;
+                                    $ins.='<span>' . $label . '</span></label>';
                                 }
                                 
 
@@ -316,6 +320,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 break;
                              case 'radio':
                                 $optionsCounter=0;
+                                $ins.='<div class="awm-radio-options">';
                                 foreach ($a['options'] as $vkey => $valll) {
                                     $chk = '';
                                     $labelRequired='';
@@ -329,6 +334,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label>';
                                     $optionsCounter++;
                                 }
+                                $ins.='</div>';
                                 break;
                             case 'section':
                                 $label_class[] = 'awm-section-field';
