@@ -211,7 +211,11 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                             case 'input':
                                 $label_class[] = 'awm-cls-33';
                                 $input_type = $a['type'];
-                                $after_message = (isset($a['after_message']) && !empty($a['after_message'])) ? '<span class="awm-after-message"><label for="' . $original_meta_id . '">' . $a['after_message'] . '</span></label>' : '';
+                                $after_message = '<label for="' . $original_meta_id . '">';
+                                if(isset($a['after_message']) && !empty($a['after_message']))
+                                {
+                                  $ins.='<span class="awm-after-message">'.$a['after_message'] . '</span>';
+                                }
                                 switch ($a['type']) {
                                     case 'number':
                                         $val = (int) $val;
@@ -229,7 +233,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                         break;
                                 }
                                 $ins .= '<input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/>' . $after_message;
-
+                                $val.='</label>';
                                 break;
                             case 'checkbox_multiple':
                                 $ins .= '<label><span>' . $a['label'] . '</span></label>';
