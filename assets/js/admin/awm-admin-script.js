@@ -66,7 +66,7 @@ jQuery(document).on('click', '.awm_custom_image_upload_image_button', function (
       title: jQuery('#' + id).attr('data-add_label'),
       library: {
         // uncomment the next line if you want to attach image to the current post
-        uploadedTo : wp.media.view.settings.post.id, 
+        //uploadedTo : wp.media.view.settings.post.id, 
         type: ['video', 'image', 'application/pdf']
       },
       button: {
