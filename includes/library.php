@@ -331,10 +331,17 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     {
                                         $labelRequired=$required;
                                     }
-                                    $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label>';
+                                    $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/>';
+                                    $ins.='<label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '">';
+                                    $ins.='<span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span>';
+                                    
+                                    $ins.='</label>';
+                                    
                                     $optionsCounter++;
                                 }
+                                
                                 $ins.='</div>';
+                                $ins.=apply_filters('awm_radio_after_text','',$a);
                                 break;
                             case 'section':
                                 $label_class[] = 'awm-section-field';
