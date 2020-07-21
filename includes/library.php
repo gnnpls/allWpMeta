@@ -33,20 +33,19 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                 switch ($a['case'])
                 {
                     case 'postType':
-                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
-
+                        $a['case'] = 'select';
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmPostFieldsForInput($a['post_type'], $number, $args);
                     break;
                     case 'term':
-                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
+                        $a['case'] = 'select';
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmTaxonomyFieldsForInput($a['taxonomy'], $number, $args);
                     break;
                     case 'user':
-                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
+                        $a['case'] = 'select';
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmUserFieldsForInput($a['roles'], $number, $args);
@@ -173,18 +172,11 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         if (isset($a['type'])) {
                             $label_class[] = $a['type'];
                         }
-                        
+
                         /*display input fields*/
                         if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'awm_tab') {
                             if ($label && $view != 'none') {
-                                
-                                if ($a['type']!='checkbox')
-                                {
                                 $ins .= '<label for="' . $original_meta_id . '" class="awm-input-label"><span>' . $label . '</span></label>';
-                                }
-                                else {
-                                   $ins .= '<label for="' . $original_meta_id . '" class="awm-input-label">';
-                                }
                             }
                         }
                         if (!empty($a['attributes']) && is_array($a['attributes'])) {
@@ -236,17 +228,11 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                         break;
                                 }
                                 $ins .= '<input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/>' . $after_message;
-                                if ($a['type']=='checkbox')
-                                {
-                                    $ins.='<span>' . $label . '</span></label>';
-                                }
-                                
 
                                 break;
                             case 'checkbox_multiple':
                                 $ins .= '<label><span>' . $a['label'] . '</span></label>';
                                 $checkboxOptions = array();
-                                $ins.='<div class="awm-options-wrapper">';
                                 if (isset($a['options']) && !empty($a['options'])) {
                                     $checkboxOptions['awm_apply_all'] = array('label' => __('Select All', 'all-wp-meta'), 'extra_label' => __('Deselect All', 'all-wp-meta'));
                                     $checkboxOptions = $checkboxOptions + $a['options'];
@@ -258,12 +244,10 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                         $value_name = $dlm != 'amw_apply_all' ? $original_meta . '[]' : '';
                                         $extraLabel = ($dlm == 'awm_apply_all' && isset($dlmm['extra_label'])) ? 'data-extra="' . $dlmm['extra_label'] . '"' : '';
                                         $valueInside = $dlm != 'awm_apply_all' ? $dlm : '';
-                                        $input_id= $original_meta_id . '_' . $dlm .'_'.rand(10,100);
-                                        $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><label id="label_' .$input_id.'" for="'.$input_id.'" class="awm-input-label" ><input type="checkbox" name="' . $value_name . '" id="' .$input_id.'" value="' . $valueInside . '" ' . $extraa . $chk_ex . ' class="' . $class . '"' . $extraLabel . ' data-value="' . $dlm . '"/><span>' . $dlmm['label'] . '</span></label></div></div>';
+                                        $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><input type="checkbox" name="' . $value_name . '" id="' . $original_meta_id . '_' . $dlm . '" value="' . $valueInside . '" ' . $extraa . $chk_ex . ' class="' . $class . '"' . $extraLabel . ' data-value="' . $dlm . '"/><label id="label_' . $original_meta_id . '_' . $dlm . '" for="' . $original_meta_id . '_' . $dlm . '" class="awm-input-label" ><span>' . $dlmm['label'] . '</span></label></div></div>';
                                     }
                                     $n = $n . '[]';
                                 }
-                                $ins.='</div>';
                                 break;
                             case 'select':
                                 if ($val != '' && !is_array($val)) {
@@ -320,7 +304,6 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 break;
                              case 'radio':
                                 $optionsCounter=0;
-                                $ins.='<div class="awm-radio-options">';
                                 foreach ($a['options'] as $vkey => $valll) {
                                     $chk = '';
                                     $labelRequired='';
@@ -331,17 +314,9 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     {
                                         $labelRequired=$required;
                                     }
-                                    $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/>';
-                                    $ins.='<label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '">';
-                                    $ins.='<span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span>';
-                                    
-                                    $ins.='</label>';
-                                    
+                                    $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label>';
                                     $optionsCounter++;
                                 }
-                                
-                                $ins.='</div>';
-                                $ins.=apply_filters('awm_radio_after_text','',$a);
                                 break;
                             case 'section':
                                 $label_class[] = 'awm-section-field';
