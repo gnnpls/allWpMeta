@@ -4,7 +4,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+add_action('init',function(){
+if (isset($_REQUEST['awm_form_nonce_field']))
+{
+    do_action('awm_form_action');
+}
 
+},100);
 
 if (!function_exists('awm_show_content'))
 {
@@ -174,7 +180,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         }
 
                         /*display input fields*/
-                        if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'awm_tab') {
+                        if ($a['case'] != 'checkbox_multiple' && $a['case'] != 'repeater' && $a['case'] != 'awm_tab' && (isset($a['type']) && $a['type']!='submit')) {
                             if ($label && $view != 'none') {
                                 $ins .= '<label for="' . $original_meta_id . '" class="awm-input-label"><span>' . $label . '</span></label>';
                             }
@@ -221,13 +227,19 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                         }
                                         $val = 1;
                                         break;
-                                    case 'hidden':
+                                    case 'hidden':                                    
                                         $label_class[] = 'awm_no_show';
                                         break;
                                     default:
                                         break;
                                 }
+                                $ins.='<div class="input-wrapper">';
                                 $ins .= '<input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/>' . $after_message;
+                                if ($a['type']=='password')
+                                {
+                                    $ins.='<div class="eye" data-toggle="password" data-id="'.$original_meta_id.'"></div>';
+                                }
+                                $ins.='</div>';
 
                                 break;
                             case 'checkbox_multiple':
@@ -250,6 +262,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 }
                                 break;
                             case 'select':
+                                $ins .= '<label><span>' . $a['label'] . '</span></label>';
                                 if ($val != '' && !is_array($val)) {
                                     $val = array($val);
                                 }
@@ -384,9 +397,15 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     if ((empty($val)) && isset($a['prePopulated'])) {
                                         $val = $a['prePopulated'];
                                     }
+                                    $a['include']['awm_key']=array(
+                                            'case'=>'input',
+                                            'type'=>'hidden',
+                                            'attributes'=>array('data-unique'=>true)
+                                        );
                                     $counter = !empty($val) ? count($val) : 1;
                                     for ($i = 0; $i < $counter; ++$i) {
-                                        $ins .= '<div class="awm-repeater-content" data-counter="' . $i . '">';
+                                        $ins .= '<div id="awm-'.$original_meta.'-'.$i.'" class="awm-repeater-content" data-counter="' . $i . '" draggable="true">';
+                                        
                                         foreach ($a['include'] as $key => $data) {
                                             $data['attributes']=isset($data['attributes']) ? $data['attributes'] : array();
                                             $inputname = $original_meta . '[' . $i . '][' . $key . ']';
@@ -752,3 +771,24 @@ function awm_admin_post_columns()
     }
 }
 
+
+function awm_create_form($library,$id,$method='post',$action='',$submit_label='')
+{
+$submit=$submit_label!='' ? $submit_label : __('Submit','awm');  
+
+$library['submit']=array(
+      'case'=>'input',
+      'type'=>'submit',
+      'attributes'=>array('value'=>__('Register','filox'))
+);
+ob_start();
+?>
+<form id="<?php echo $id;?>" action="<?php echo $action;?>" method="<?php echo $post;?>">
+    <?php wp_nonce_field( $id, 'awm_form_nonce_field' ); ?>
+    <?php echo awm_show_content($library);?>
+</form>
+<?php
+$content=ob_get_contents();
+ob_end_clean();
+return $content;
+}

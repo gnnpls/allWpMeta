@@ -56,6 +56,7 @@
   .awm_action {
    cursor: pointer;
    width: auto;
+
    &:hover {
     opacity: 0.5;
    }
@@ -118,4 +119,23 @@
 
 .awm-repeater-title {
  font-weight: bold;
+}
+
+.awm-repeater-content[draggable] {
+ will-change: transform;
+ cursor: move;
+ transition: all 200ms;
+ user-select: none;
+ margin: 10px auto;
+ position: relative;
+}
+
+
+.awm-repeater-content[draggable]:hover:after {
+ opacity: 1;
+ transform: translate(0);
+}
+
+.over {
+ transform: scale(1.1, 1.1);
 }

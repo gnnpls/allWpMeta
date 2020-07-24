@@ -7,7 +7,7 @@ awmSelectrBoxes();
 awmInitForms();
 awmMultipleCheckBox();
 awm_create_calendar();
-
+awm_add_drags();
 
 jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
 
@@ -23,6 +23,7 @@ jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
       jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').attr('data-counter', new_counter);
       jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').find('input,select,textarea').each(function () {
         jQuery(this).val('');
+        jQuery(this).prop('checked',false);
         var namee, id;
         if (jQuery(this).attr("name")) {
           namee = jQuery(this).attr("name").replace("[" + old_counter + "]", "[" + new_counter + "]");
@@ -40,8 +41,6 @@ jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
       jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').removeClass('cloned');
 
       jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] input.hasDatepicker').removeClass('hasDatepicker');
-
-
       repeaterInit();
     }
   } else {
@@ -265,6 +264,8 @@ function repeaterInit(){
   awmSelectrBoxes();
   awmInitForms();
   awmCallbacks();
+  awm_add_drags();
+  
 }
 
 
@@ -294,5 +295,85 @@ function awmMultipleCheckBox() {
         });
       }
     });
+  }
+}
+
+function dragStart(e) {
+  this.style.opacity = '0.4';
+  dragSrcEl = this;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', this.innerHTML);
+};
+
+function dragEnter(e) {
+  this.classList.add('over');
+}
+
+function dragLeave(e) {
+  e.stopPropagation();
+  this.classList.remove('over');
+}
+
+function dragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function dragDrop(e) {
+  if (dragSrcEl != this) {
+    dragSrcEl.innerHTML = this.innerHTML;
+    this.innerHTML = e.dataTransfer.getData('text/html');
+  }
+  return false;
+}
+
+function dragEnd(e) {
+  var listItens = document.querySelectorAll('.awm-repeater-content[draggable]');
+  [].forEach.call(listItens, function (item) {
+    item.classList.remove('over');
+  });
+  this.style.opacity = '1';
+  awm_add_drags();
+}
+
+function addEventsDragAndDrop(el) {
+  el.addEventListener('dragstart', dragStart, false);
+  el.addEventListener('dragenter', dragEnter, false);
+  el.addEventListener('dragover', dragOver, false);
+  el.addEventListener('dragleave', dragLeave, false);
+  el.addEventListener('drop', dragDrop, false);
+  el.addEventListener('dragend', dragEnd, false);
+}
+
+
+function awm_add_drags()
+{
+  var repeaters = document.querySelectorAll('.repeater.awm-meta-field');
+  if (repeaters)
+  {
+    [].forEach.call(repeaters,function(repeater){
+    var group=repeater.getAttribute('data-input');
+    var counter=0;
+    var listItens = repeater.querySelectorAll('.awm-repeater-content[draggable]');
+    [].forEach.call(listItens, function (item) {
+      var old_counter=item.getAttribute('data-counter');  
+      item.id='awm-'+group+'-'+counter;
+      item.setAttribute('data-counter',counter);
+      var inputs=item.querySelectorAll('input,select,textarea');
+      if (inputs)
+      {
+        [].forEach.call(inputs, function (input) {
+          if (input.getAttribute('data-unique') && input.value=='') {
+            input.value = Date.now();
+          }
+          input.setAttribute('name',input.name.replace("[" + old_counter + "]", "[" + counter + "]"));
+        });
+      }
+      addEventsDragAndDrop(item);
+      counter++;
+    });
+  })
+  
   }
 }

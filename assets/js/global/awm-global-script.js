@@ -1,3 +1,41 @@
+awm_auto_fill_inputs();
+awm_toggle_password();
+/**
+ * this function is used to toggle the password to show text or not
+ */
+function awm_toggle_password()
+{
+  document.querySelectorAll('[data-toggle="password"]').forEach(function (el) {
+    el.addEventListener("click", function (e) {
+      var target = document.getElementById(el.getAttribute('data-id'));
+      var type = target.getAttribute('type') === 'password' ? 'text' : 'password';
+      target.setAttribute('type', type);
+    });
+  });
+}
+
+
+/**
+ this function is used in order to get all the inputs tha will be autofilled by others
+ */
+function awm_auto_fill_inputs()
+{
+  var elems = document.querySelectorAll('input[fill-from]');
+  console.log(elems);
+  if (elems){
+  elems.forEach(function (elem) {
+      var origin=elem.getAttribute('fill-from');
+      var element = document.getElementById(origin);
+      if (element) {
+        element.addEventListener('change', function () {
+        elem.value=element.value;
+      });
+    }
+  });
+}
+}
+
+
 function awm_open_tab(evt, div) {
  var i, awm_tabcontent, awm_tablinks;
  div = div.trim()
