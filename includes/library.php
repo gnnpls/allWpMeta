@@ -320,6 +320,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 break;
                              case 'radio':
                                 $optionsCounter=0;
+                                $ins.='<div class="awm-radio-options">';
                                 foreach ($a['options'] as $vkey => $valll) {
                                     $chk = '';
                                     $labelRequired='';
@@ -333,6 +334,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label>';
                                     $optionsCounter++;
                                 }
+                                $ins.='</div>';
                                 break;
                             case 'section':
                                 $label_class[] = 'awm-section-field';
