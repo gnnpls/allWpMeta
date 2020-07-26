@@ -14,7 +14,6 @@ function awm_toggle_password()
   });
 }
 
-
 /**
  this function is used in order to get all the inputs tha will be autofilled by others
  */
