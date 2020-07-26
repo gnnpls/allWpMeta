@@ -9,7 +9,6 @@ if (isset($_REQUEST['awm_form_nonce_field']))
 {
     do_action('awm_form_action');
 }
-
 },100);
 
 if (!function_exists('awm_show_content'))
@@ -39,19 +38,19 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                 switch ($a['case'])
                 {
                     case 'postType':
-                        $a['case'] = 'select';
+                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmPostFieldsForInput($a['post_type'], $number, $args);
                     break;
                     case 'term':
-                        $a['case'] = 'select';
+                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmTaxonomyFieldsForInput($a['taxonomy'], $number, $args);
                     break;
                     case 'user':
-                        $a['case'] = 'select';
+                        $a['case'] = isset($a['view']) ? $a['view'] : 'select';
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
                         $a['options'] = awmUserFieldsForInput($a['roles'], $number, $args);
@@ -248,6 +247,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 if (isset($a['options']) && !empty($a['options'])) {
                                     $checkboxOptions['awm_apply_all'] = array('label' => __('Select All', 'all-wp-meta'), 'extra_label' => __('Deselect All', 'all-wp-meta'));
                                     $checkboxOptions = $checkboxOptions + $a['options'];
+                                    $ins.='<div class="awm-options-wrapper">';
                                     foreach ($checkboxOptions as $dlm => $dlmm) {
                                         $chk_ex = '';
                                         if (is_array($val) && in_array($dlm, $val)) {
@@ -258,6 +258,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                         $valueInside = $dlm != 'awm_apply_all' ? $dlm : '';
                                         $ins .= '<div class="awm-multiple-checkbox"><div class="insider"><input type="checkbox" name="' . $value_name . '" id="' . $original_meta_id . '_' . $dlm . '" value="' . $valueInside . '" ' . $extraa . $chk_ex . ' class="' . $class . '"' . $extraLabel . ' data-value="' . $dlm . '"/><label id="label_' . $original_meta_id . '_' . $dlm . '" for="' . $original_meta_id . '_' . $dlm . '" class="awm-input-label" ><span>' . $dlmm['label'] . '</span></label></div></div>';
                                     }
+                                    $ins.='</div>';
                                     $n = $n . '[]';
                                 }
                                 break;
