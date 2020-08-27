@@ -342,4 +342,12 @@ body.wp-admin {
    margin-bottom: 10px;
   }
  }
+
+ /**
+ * custom select box
+ */
+
+ .ss-content.ss-open{
+  z-index:2;
+ }
 }
