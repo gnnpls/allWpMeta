@@ -1,5 +1,6 @@
 awm_auto_fill_inputs();
 awm_toggle_password();
+awmShowInputs();
 /**
  * this function is used to toggle the password to show text or not
  */
