@@ -1,5 +1,6 @@
 awm_auto_fill_inputs();
 awm_toggle_password();
+awmShowInputs();
 /**
  * this function is used to toggle the password to show text or not
  */
@@ -20,7 +21,6 @@ function awm_toggle_password()
 function awm_auto_fill_inputs()
 {
   var elems = document.querySelectorAll('input[fill-from]');
-  console.log(elems);
   if (elems){
   elems.forEach(function (elem) {
       var origin=elem.getAttribute('fill-from');

@@ -8,8 +8,6 @@
   }
  }
 
- display: inline-block;
- vertical-align: top;
  position: relative;
  box-sizing: border-box;
 
@@ -36,8 +34,8 @@
   width: auto !important;
   max-width: 90%;
   display: inline-block !important;
-  float: none !important;
   vertical-align: top;
+  margin-left: 5px;
 
   @media screen and (max-width: 1100px) {
    max-width: 85%;
@@ -115,9 +113,7 @@
  *:not(.ss-arrow),
  *:not(.arrow-up),
  *:not(.arrow-down) *:not(.ss-single-selected) {
-  display: table-row;
-  width: 100%;
-  float: left;
+
 
   &.wp-editor-tools,
   &.wp-core-ui,
@@ -166,39 +162,15 @@
 
  }
 
- /*custom select rules*/
- .ss-main {
-  >div {
-   display: flex;
-  }
 
-  .ss-arrow,
-  .ss-values,
-  .ss-add {
-   width: auto;
-   display: flex;
-  }
-
-  .ss-values {
-   width: calc(100% - 30px);
-  }
-
-  .ss-value {
-   display: flex;
-   width: unset;
-
-   >span {
-    display: inline;
-    width: auto;
-   }
-  }
- }
 
  label {
   text-align: left;
   font-weight: 500;
   padding: 2% 0% !important;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  position: relative;
+  display: block;
  }
 
  &.sbp-show {
@@ -239,29 +211,6 @@
  }
 }
 
-.awm-multiple-checkbox {
- width: auto !important;
- display: inline-table !important;
- float: left !important;
- margin-right: 10px;
- margin-bottom: 10px;
-
- .insider {
-
-  label,
-  input {
-   display: table-cell;
-   width: auto !important;
-   vertical-align: middle;
-   margin: 0;
-   padding: 0 5px !important;
-   float: inherit;
-  }
-  .awm-options-wrapper{
-   position:relative;
-  }
- }
-}
 
 .awm-cls-33 {
  width: 32%;
@@ -269,27 +218,6 @@
  display: inline-table;
  margin-bottom: 15px;
  border: none !important;
-}
-
-@media screen and (max-width: 599px) {
- .awm-cls-33 {
-  width: 45% !important;
-  margin-right: 2% !important;
- }
-
- .awm-cls-50 {
-  width: 90% !important;
-  margin: 0 auto !important;
- }
-}
-
-@media screen and (max-width: 429px) {
-
- .awm-cls-33,
- .awm-cls-50 {
-  width: 90% !important;
-  margin: 0 auto !important;
- }
 }
 
 .awm-cls-50 {
@@ -308,6 +236,29 @@
 .awm-cls-100 {
  width: 100%;
 }
+
+@media screen and (max-width: 599px) {
+ .awm-cls-33 {
+  width: 45% !important;
+  margin-right: 2% !important;
+ }
+
+ .awm-cls-50 {
+  width: 90% !important;
+  margin: 0 auto !important;
+ }
+}
+
+@media screen and (max-width: 429px) {
+
+ .awm-cls-33,
+ .awm-cls-50 {
+  width: 95% !important;
+  margin: 5px auto !important;
+ }
+}
+
+
 
 .awm-term-input {
  .awm-input-label {
@@ -347,7 +298,9 @@ body.wp-admin {
  * custom select box
  */
 
- .ss-content.ss-open{
-  z-index:2;
+ .ss-content.ss-open {
+  z-index: 2;
  }
+
+
 }

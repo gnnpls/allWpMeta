@@ -2,7 +2,7 @@
 
 awm_add_map();
 awmCallbacks();
-awmShowInputs();
+
 awmSelectrBoxes();
 awmInitForms();
 awmMultipleCheckBox();

@@ -16,6 +16,13 @@
 
  .input-wrapper {
   position: relative;
+  display: block;
+  margin-top: 5px;
+
+  input {
+   width: 95%;
+   margin: 0 auto;
+  }
  }
 
  .eye {
@@ -27,8 +34,8 @@
   border: solid 1px #000;
   border-radius: 75% 15%;
   transform: rotate(45deg) translateY(-50%);
-  cursor:pointer;
-  z-index:99999999;
+  cursor: pointer;
+  z-index: 99999999;
  }
 
  .eye:before {

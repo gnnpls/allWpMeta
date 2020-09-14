@@ -307,6 +307,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 $label_class[] = 'awm-cls-33';
                                 break;
                             case 'textarea':
+                                $ins .= '<label><span>' . $a['label'] . '</span></label>';
                                 $label_class[] = 'awm-cls-100';
                                 if (isset($a['wp_editor']) && $a['wp_editor']) {
                                     ob_start();
@@ -331,7 +332,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                     {
                                         $labelRequired=$required;
                                     }
-                                    $ins .= '<input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label>';
+                                    $ins .= '<div class="awm-radio-option"><input type="radio" name="' . $original_meta . '" id="' . $original_meta_id . '_' . $vkey . '" value="' . $vkey . '" ' . $chk . ' ' . $labelRequired. '/><label class="awm-radio-options" for="' . $original_meta_id . '_' . $vkey . '"><span class="awm-radio-label">' . apply_filters('awm_radio_value_label_filter', $valll['label'], $vkey, $original_meta_id) . '</span></label></div>';
                                     $optionsCounter++;
                                 }
                                 $ins.='</div>';
@@ -409,7 +410,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                         );
                                     $counter = !empty($val) ? count($val) : 1;
                                     for ($i = 0; $i < $counter; ++$i) {
-                                        $ins .= '<div id="awm-'.$original_meta.'-'.$i.'" class="awm-repeater-content" data-counter="' . $i . '" draggable="true">';
+                                        $ins .= '<div id="awm-'.$original_meta.'-'.$i.'" class="awm-repeater-content" data-counter="' . $i . '" draggable="true"><div class="awm-repeater-inputs">';
                                         
                                         foreach ($a['include'] as $key => $data) {
                                             $data['attributes']=isset($data['attributes']) ? $data['attributes'] : array();
@@ -424,7 +425,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                             $ins .= awm_show_content(array($inputname => $data));
                                         }
                                         $item = isset($a['item_name']) ? $a['item_name'] : awm_Roww;
-                                        $ins .= '<div class="awm-actions"><div class="awm-repeater-remove"><span class="awm_action awm-remove">' . awm_Remove . ' ' . $item . '</span></div><div class="awm-repeater-add"><span class="awm_action awm-add">' . awm_Add . ' ' . $item . '</span></div></div>';
+                                        $ins .= '</div><div class="awm-actions"><div class="awm-repeater-remove"><span class="awm_action awm-remove">' . awm_Remove . ' ' . $item . '</span></div><div class="awm-repeater-add"><span class="awm_action awm-add">' . awm_Add . ' ' . $item . '</span></div></div>';
 
                                         $ins .= '</div>';
                                         /*repeater content end*/
@@ -470,7 +471,6 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                             $msg[] = '<td>' . $ins . '</td></tr>';
                             break;
                         default:
-                            $label_class[] = 'awm-meta-field';                            
                             $msg[] = '<div class="' . implode(' ', $label_class). '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '" '.$labelAttrs.'>';
                             $msg[] = $ins;
                             if (is_admin() && isset($a['information']) && !empty($a['information'])) {

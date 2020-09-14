@@ -90,6 +90,15 @@ class all_WP_Meta
         $optionsPages = $this->options_boxes();
         if (!empty($optionsPages))
         {
+            /**
+             * sort settings by order
+             */
+            uasort($optionsPages, function ($a, $b) {
+                if (isset($a['order']) && isset($b['order'])) {
+                    return $a['order'] - $b['order'];
+                }
+            });
+
             foreach ($optionsPages as $optionKey=>$optionData)
             {
                 if (isset($optionData['library']) && !empty($optionData['library']))
@@ -141,6 +150,14 @@ class all_WP_Meta
         if (in_array($pagenow,array('edit-tags.php','term.php'))) {
         $metaBoxes = $this->term_meta_boxes();
         if (!empty($metaBoxes)) {
+            /**
+             * sort settings by order
+             */
+            uasort($metaBoxes, function ($a, $b) {
+                if (isset($a['order']) && isset($b['order'])) {
+                    return $a['order'] - $b['order'];
+                }
+            });
             foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {              
                 if (isset($metaBoxData['library']) && !empty($metaBoxData['library']) && isset($metaBoxData['taxonomies'])) {
                     $metaBoxData['id']=$metaBoxKey;
@@ -163,7 +180,11 @@ class all_WP_Meta
         }
     }
 
-
+    /**
+     * add metaboxes to the admin
+     * @param array $postType all the post type sto show the post box
+     * @param object $post the post object
+     */
     public function awm_add_post_meta_boxes($postType,$post)
     {
         
@@ -172,6 +193,15 @@ class all_WP_Meta
     if (!empty($metaBoxes)) {
         wp_enqueue_media();
         foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {
+            /**
+             * sort settings by order
+             */
+            uasort($metaBoxes, function ($a, $b) {
+                if (isset($a['order']) && isset($b['order'])) {
+                    return $a['order'] - $b['order'];
+                }
+            });
+            
             if (isset($metaBoxData['library']) && !empty($metaBoxData['library']) && in_array($postType, $metaBoxData['postTypes'])) {
                 $metaBoxData['id'] = $metaBoxKey;
                 add_meta_box($metaBoxKey,
