@@ -388,7 +388,9 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 $lat = (isset($val['lat']) && !empty($val['lat'])) ? $val['lat'] : '';
                                 $lng = (isset($val['lng']) && !empty($val['lng'])) ? $val['lng'] : '';
                                 $address = (isset($val['address']) && !empty($val['address'])) ? $val['address'] : '';
-                                $ins .= '<input id="awm_map' . $original_meta_id . '_search_box" class="controls" type="text" placeholder="' . $a['label'] . '" value="' . $address . '" ' . $required . ' onkeypress="return noenter()"><div class="awm_map" id="awm_map' . $original_meta_id . '"></div>';
+                                $ins .= '<label><span>' . $a['label'] . '</span></label>';
+                                $ins .= '<input id="awm_map' . $original_meta_id . '_search_box" class="controls" type="text" placeholder="
+                                '.__('Type to search','awm').'" value="' . $address . '" ' . $required . ' onkeypress="return noenter()"><div class="awm_map" id="awm_map' . $original_meta_id . '"></div>';
                                 $ins .= '<input type="hidden" name="' . $original_meta . '[lat]" id="awm_map' . $original_meta_id . '_lat" value="' . $lat . '" />';
                                 $ins .= '<input type="hidden" name="' . $original_meta . '[lng]" id="awm_map' . $original_meta_id . '_lng" value="' . $lng . '" />';
                                 $ins .= '<input type="hidden" name="' . $original_meta . '[address]" id="awm_map' . $original_meta_id . '_address" value="' . $address . '" />';

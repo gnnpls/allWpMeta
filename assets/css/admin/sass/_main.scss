@@ -92,19 +92,7 @@
   }
  }
 
- .awm_map {
-  -moz-transition: none;
-  -webkit-transition: none;
-  -o-transition: color 0 ease-in;
-  transition: none;
 
-  * {
-   -moz-transition: none;
-   -webkit-transition: none;
-   -o-transition: color 0 ease-in;
-   transition: none;
-  }
- }
 
  *:not(.ss-main),
  *:not(.awm-meta-html),
@@ -146,7 +134,6 @@
    display: block;
   }
 
-  &.awm_map *,
   &.mce-tinymce.mce-container.mce-panel *,
   &.mce-container *,
   &.mce-container-body &.mce-tinymce * &.sbp-tippy-admin-message {
