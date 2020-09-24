@@ -97,8 +97,8 @@
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
   grid-column-gap: 5px;
-  width:100%;
-  margin-bottom:5px;
+  width: 100%;
+  margin-bottom: 5px;
 
   .awm-meta-field {
    width: 100% !important;
@@ -124,6 +124,13 @@
  }
 
  @media screen and (max-width: 429px) {
+  .awm-repeater-inputs {
+   grid-template-columns: 1fr;
+  }
+ }
+
+
+ #postbox-container-1 & {
   .awm-repeater-inputs {
    grid-template-columns: 1fr;
   }

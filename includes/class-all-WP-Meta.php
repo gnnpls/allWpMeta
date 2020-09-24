@@ -42,14 +42,32 @@ class all_WP_Meta
 
             
             });
-            if (is_admin()){
             add_action('add_meta_boxes', array($this,'awm_add_post_meta_boxes'),10,2);
-            add_action('admin_init', 'awm_admin_post_columns');
+            add_action('admin_init', 'awm_admin_post_columns',100);
             add_action('admin_init',array($this,'awm_add_term_meta_boxes'),100);
             add_action('admin_menu',array($this,'awm_add_options_page'),100);
             add_action('admin_init',array($this,'awm_register_option_settings'),100);
-            }            
+            add_action('restrict_manage_posts',array($this,'awm_add_restrict_posts_form'),100);
+            add_filter('pre_get_posts', array($this,'awm_pre_get_posts'),100);
     }
+
+    /**
+     * this function is responsible for the admin pre get posts based on the awm restrict manage posts
+     */
+    public function awm_pre_get_posts($query)    {
+        global $pagenow;
+        if (!isset($_GET['awm_restict_post_list']) || empty($_GET['awm_restict_post_list'])) {
+            return;
+        }
+        if ($query->is_main_query() && is_admin()) {
+            }
+        return $query;
+    }
+
+    /**
+     * 
+     */
+
 
     /**
      * get all the registered options pages
@@ -69,7 +87,7 @@ class all_WP_Meta
      */
     protected function meta_boxes()
     {
-        return apply_filters('awm_add_meta_boxes_filter',array());
+        return apply_filters('awm_add_meta_boxes_filter',array(),1);
     }
 
     /**
@@ -80,6 +98,51 @@ class all_WP_Meta
     protected function term_meta_boxes()
     {
         return apply_filters('awm_add_term_meta_boxes_filter',array());
+    }
+
+    /**
+     * get all the restict post forms
+     */
+    protected function restrict_post_forms()
+    {
+        return apply_filters('awm_restrict_post_boxes_filter',array());
+    }
+
+
+    /**
+     * get all the forms added to certain post types via awm
+     */
+    public function awm_add_restrict_posts_form()
+    {
+        $restrict_post_forms = $this->restrict_post_forms();
+         if (!empty($restrict_post_forms))
+        {
+            /**
+             * sort settings by order
+             */
+
+            uasort($restrict_post_forms, function ($a, $b) {
+                if (isset($a['order']) && isset($b['order'])) {
+                    return $a['order'] - $b['order'];
+                }
+            });
+            $post_type=$_GET['post_type'] ? $_GET['post_type'] : 'post';
+            
+            foreach ($restrict_post_forms as $optionKey=>$optionData)
+                {
+                    if (in_array($post_type,$optionData['postTypes']) && !empty($optionData['library']))
+                    {
+                        $library=array();
+                        foreach ($optionData['library'] as $key=>$data)
+                        {
+                            $library[$key]=$data;
+                            $library[$key]['exclude_meta']=true;
+                        }
+                        $library['awm_restict_post_list']=array('case'=>'input','type'=>'hidden','exclude_meta'=>true,'attributes'=>array('value'=>$optionKey));
+                        echo awm_show_content($library,0,'restrict_manage_posts');
+                    }
+                }
+        }
     }
 
     /**

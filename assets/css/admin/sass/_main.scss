@@ -134,18 +134,9 @@
    display: block;
   }
 
-  &.mce-tinymce.mce-container.mce-panel *,
-  &.mce-container *,
-  &.mce-container-body &.mce-tinymce * &.sbp-tippy-admin-message {
-   width: auto;
-   float: inherit;
-   display: inherit;
-  }
-
-  &.mce-edit-area.mce-container {
+   &.mce-edit-area.mce-container {
    width: 100% !important;
   }
-
 
  }
 

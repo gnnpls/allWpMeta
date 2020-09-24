@@ -22,6 +22,13 @@ if (!function_exists('awm_show_content'))
 function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $label = true, $specific = '', $sep = ', ')
 {
     $msg = array();
+    global $awm_post_id;
+    $awm_post_id=$id;
+    uasort($arrs, function ($a, $b) {
+                if (isset($a['order']) && isset($b['order'])) {
+                    return $a['order'] - $b['order'];
+                }
+            });
     foreach ($arrs as $n => $a) {
         /*check if hidden val or not*/
         $required = (isset($a['required']) && $a['required']) ? 'required="true"' : false;
@@ -45,9 +52,11 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                     break;
                     case 'term':
                         $a['case'] = isset($a['view']) ? $a['view'] : 'select';
+ 
                         $number = isset($a['number']) ? $a['number'] : '-1';
                         $args = isset($a['args']) ? $a['args'] : array();
-                        $a['options'] = awmTaxonomyFieldsForInput($a['taxonomy'], $number, $args);
+                        $option_key=isset($a['option_key']) ? $a['option_key'] : 'term_id';
+                        $a['options'] = awmTaxonomyFieldsForInput($a['taxonomy'], $number,$option_key, $args);
                     break;
                     case 'user':
                         $a['case'] = isset($a['view']) ? $a['view'] : 'select';
@@ -83,6 +92,9 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         break;
                     case 'post':
                         $val = get_post_meta($id, $original_meta, true) ?: '';
+                        break;
+                    case 'restrict_manage_posts':
+                        $val =isset($_GET[$original_meta]) ? $_GET[$original_meta] : '';  
                         break;
                     default:
                         $val = 0;
@@ -202,7 +214,11 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
 
                         $extraa .= isset($extra_fields2) ? implode(' ', $extra_fields2) : '';
                         switch ($a['case']) {
-                            
+                            case 'function':
+                               if (isset($a['callback'])  && function_exists($a['callback'])) {                                    
+                                    $ins = '<div class="awm-meta-message" id="' . $original_meta_id . '"><div class="awm-meta-message-label">' . $a['label'] . '</div><div class="awm-meta-message-inner">' . call_user_func_array($a['callback'], array($id)) . '</div></div>';
+                                }
+                                break;
                             case 'message':
                                 if (isset($a['value']) && !empty($a['value'])) {
                                     $ins = '<div class="awm-meta-message" id="' . $original_meta_id . '"><div class="awm-meta-message-label">' . $a['label'] . '</div><div class="awm-meta-message-inner">' . $a['value'] . '</div></div>';
@@ -307,7 +323,6 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 $label_class[] = 'awm-cls-33';
                                 break;
                             case 'textarea':
-                                $ins .= '<label><span>' . $a['label'] . '</span></label>';
                                 $label_class[] = 'awm-cls-100';
                                 if (isset($a['wp_editor']) && $a['wp_editor']) {
                                     ob_start();
@@ -439,7 +454,7 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                             default:
                                 break;
                         }
-                       if ($label && !(isset($a['attributes']['exclude_meta'])) && $view != 'none' && !isset($a['attributes']['disabled'])) {
+                       if ($label && !(isset($a['attributes']['exclude_meta'])) && $view != 'none' && !isset($a['attributes']['disabled']) && !isset($a['exclude_meta'])) {
                             $ins .= '<input type="hidden" name="awm_custom_meta[]" value="' . $original_meta . '"/>';
                         }
 
@@ -672,7 +687,9 @@ if (!function_exists('awm_translated_ids')) {
 
 function awm_display_meta_value($meta, $data, $postId)
 {
-    $value = get_post_meta($postId, $meta, 'true') ?: false;
+    global $awm_post_id;
+    $awm_post_id=$postId;
+    $value = get_post_meta($postId, $meta, 'true') ?: false;    
         switch ($data['case']) {
             case 'input':
                 switch ($data['type'])
@@ -690,7 +707,14 @@ function awm_display_meta_value($meta, $data, $postId)
                 break;  
             case 'message':
             case 'html':
-                $value=isset($data['value']) ? $data['value'] : '';
+                $value=isset($data['value']) ? $data['value'] : '';  
+                            
+            break;
+            case 'function':
+                if (isset($data['callback']) && function_exists($data['callback']))
+                {
+                    $value=call_user_func_array($data['callback'], array($postId));
+                }
             break;
             case 'select':
             case 'checkbox_mutliple':
@@ -745,7 +769,6 @@ function awm_admin_post_columns()
                                     if (isset($_GET['post_type']) && $_GET['post_type'] == $postType) {
                                         add_filter('manage_' . $postType . '_posts_columns', function ($columns) use ($data) {
                                             $columns[$data['key']] = $data['label'];
-
                                             return $columns;
                                         }, 10, 1);
                                         /*add_filter('manage_edit-'.$postType.'_sortable_columns', function ($columns) use ($data) {
