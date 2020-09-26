@@ -76,12 +76,13 @@ if (!function_exists('awmPostFieldsForInput')) {
  * function to get the posts of a post type
  * @param string $taxonomy wordpres taxonomy name
  * @param int $number the number of posts to show
+ * @param string $option_key which key to bring back to the option value
  * @param array $args array for the get_posts function
  * 
  */
 if (!function_exists('awmTaxonomyFieldsForInput'))
 {
-    function awmTaxonomyFieldsForInput($taxonomy='',$number='-1',$args=array())
+    function awmTaxonomyFieldsForInput($taxonomy='',$number='-1',$option_key='term_id',$args=array())
     {
         $options = array();
         $defaultArgs = array(
@@ -101,7 +102,7 @@ if (!function_exists('awmTaxonomyFieldsForInput'))
         $content = get_terms($defaultArgs);
         if (!empty($content)) {
             foreach ($content as $data) {
-                $options[$data->term_id] = array('label' => $data->name);
+                $options[$data->{$option_key}] = array('label' => $data->name);
             }
         }
         return apply_filters('awmTaxonomyFieldsForInput_filter', $options,$taxonomy,$number,$defaultArgs);
