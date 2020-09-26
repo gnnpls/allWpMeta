@@ -466,10 +466,10 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                         case 'term':
                             switch ($id) {
                                 case 0:
-                                    $msg[] = '<div class="form-field term-group awm-term-meta-row ' .$labelClass. '" '.$labelAttrs.'>' . $ins . '</div>';
+                                    $msg[] = '<div class="form-field term-group awm-term-meta-row awm-meta-term-field' .$labelClass. '" '.$labelAttrs.'>' . $ins . '</div>';
                                     break;
                                 default:
-                                    	$msg[] = '<tr class="form-field term-group-wrap" data-input="' . $original_meta_id . '"><th scope="row" class="' . implode(' ', $label_class) . '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '"><label for="' . $original_meta_id . '" class="awm-input-label">' . $a['label'] . '</label></th><td class="awm-term-input">' . $ins . '</td></tr>';
+                                    	$msg[] = '<tr class="form-field term-group-wrap awm-meta-term-field" data-input="' . $original_meta_id . '"><th scope="row" class="' . implode(' ', $label_class) . '" data-input="' . $original_meta_id . '" data-type="' . $a['case'] . '"><label for="' . $original_meta_id . '" class="awm-input-label">' . $a['label'] . '</label></th><td class="awm-term-input">' . $ins . '</td></tr>';
                                     break;
                             }
 

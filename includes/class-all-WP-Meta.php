@@ -243,6 +243,7 @@ class all_WP_Meta
         if (in_array($pagenow,array('edit-tags.php','term.php'))) {
         $metaBoxes = $this->term_meta_boxes();
         if (!empty($metaBoxes)) {
+            wp_enqueue_media();
             /**
              * sort settings by order
              */
