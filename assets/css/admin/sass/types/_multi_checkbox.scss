@@ -1,25 +1,26 @@
-.awm-meta-field{
-.awm-multiple-checkbox {
- width: auto !important;
- display: inline-table !important;
- float: left !important;
- margin-right: 10px;
- margin-bottom: 10px;
+.awm-meta-field.checkbox_multiple {
+ .awm-multiple-checkbox {
+  width: auto !important;
+  display: inline-table !important;
+  float: left !important;
+  margin-right: 10px;
+  margin-bottom: 10px;
 
- .insider {
+  .insider {
 
-  label,
-  input {
-   display: table-cell;
-   width: auto !important;
-   vertical-align: middle;
-   margin: 0;
-   padding: 0 5px !important;
-   float: inherit;
-  }
+   label,
+   input {
+    display: table-cell;
+    width: auto !important;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0 5px !important;
+    float: inherit;
+   }
 
-  .awm-options-wrapper {
-   position: relative;
+   .awm-options-wrapper {
+    position: relative;
+   }
   }
  }
 }
