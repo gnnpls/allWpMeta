@@ -682,7 +682,7 @@ function awm_display_meta_value($meta, $data, $postId)
 {
     global $awm_post_id;
     $awm_post_id=$postId;
-    $value = get_post_meta($postId, $meta, true) ?: false;    
+    $value = get_post_meta($postId, $meta, 'true') ?: false;    
         switch ($data['case']) {
             case 'input':
                 switch ($data['type'])
