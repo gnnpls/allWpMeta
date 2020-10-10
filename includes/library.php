@@ -682,7 +682,8 @@ function awm_display_meta_value($meta, $data, $postId)
 {
     global $awm_post_id;
     $awm_post_id=$postId;
-    $value = get_post_meta($postId, $meta, 'true') ?: false;    
+    $value = get_post_meta($postId, $meta, true) ?: false;
+    $original_value=$value;
         switch ($data['case']) {
             case 'input':
                 switch ($data['type'])
@@ -696,7 +697,7 @@ function awm_display_meta_value($meta, $data, $postId)
                 
             break;
             case 'postType':
-                $value=get_the_title($value);
+                $value='<a href="'.get_edit_post_link($value).'" target="_blank">'.get_the_title($value).'</a>';
                 break;  
             case 'message':
             case 'html':
@@ -717,7 +718,7 @@ function awm_display_meta_value($meta, $data, $postId)
             break;
         }
 
-    return apply_filters('awm_display_meta_value_filter',$value,$meta,$data,$postId);
+    return apply_filters('awm_display_meta_value_filter',$value,$meta,$original_value,$data,$postId);
 }
 
 
