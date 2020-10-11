@@ -222,3 +222,85 @@ function awmShowInputs() {
     });
   }
 }
+
+
+function awm_create_calendar() {
+  jQuery('.awm_cl_date:not(.hasDatepicker)').each(function () {
+  
+    var idd = jQuery(this).attr('id');
+    var parameters = {
+      dateFormat: 'dd-mm-yy',
+      changeMonth: true
+    }
+    if (!jQuery('.awm-no-limit-date').length) {
+      parameters.minDate = 0;
+    }
+    jQuery('#' + idd).datepicker(parameters);
+  });
+
+
+
+
+
+}
+
+function awm_create_calendar() {
+  jQuery('.awm_cl_date:not(.hasDatepicker)').each(function () {
+    var idd = jQuery(this).attr('id');
+
+    var parameters = {
+      dateFormat: 'dd-mm-yy',
+      changeMonth: false
+    }
+
+    if (jQuery(this).attr('max-date')) {
+      parameters.maxDate = jQuery(this).attr('max-date');
+    }
+
+
+    if (!jQuery(this).hasClass('awm-no-limit-date')) {
+      parameters.minDate = 0;
+    }
+
+    if (jQuery(this).hasClass('awm-cl-enable-trigger')) {
+      parameters.onSelect = function (d, i) {
+        if (d !== i.lastVal) {
+          document.getElementById(idd).dispatchEvent(new Event('change'));
+        }
+
+      };
+    }
+    jQuery('#' + idd).datepicker(parameters);
+  });
+
+
+  jQuery(document).on('change', 'input.awm_cl_date.hasDatepicker', function () {
+    var stop = false;
+    var date = jQuery(this).datepicker('getDate');
+    var change = jQuery(this).attr('data-change');
+    if (change != '') {
+      var next_date = jQuery('#' + change).datepicker('getDate');
+      var add_days = jQuery('#' + change).attr('data-days') ? parseInt(jQuery('#' + change).attr('data-days')) : 1;
+      if (next_date !== null) {
+        if (awm_timestamp(date) > awm_timestamp(next_date)) {
+          stop = true;
+        }
+      }
+      date.setDate(date.getDate() + add_days);
+      jQuery('#' + change).datepicker('option', 'minDate', date);
+      if (stop) {
+        jQuery('#' + change).datepicker('setDate', date);
+      }
+
+    }
+  });
+}
+
+function awm_timestamp(d) {
+  "use strict";
+  d = new Date(d);
+  d = d.setUTCHours(24, 0, 0, 0);
+  return (d / 1000);
+}
+
+
