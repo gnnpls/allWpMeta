@@ -256,7 +256,10 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 $checkboxOptions = array();
                                 $ins.='<div class="awm-options-wrapper">';
                                 if (isset($a['options']) && !empty($a['options'])) {
+                                    if (!isset($a['disable_apply_all']))
+                                    {
                                     $checkboxOptions['awm_apply_all'] = array('label' => __('Select All', 'all-wp-meta'), 'extra_label' => __('Deselect All', 'all-wp-meta'));
+                                    }
                                     $checkboxOptions = $checkboxOptions + $a['options'];
                                     foreach ($checkboxOptions as $dlm => $dlmm) {
                                         $chk_ex = '';

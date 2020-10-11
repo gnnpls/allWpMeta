@@ -224,27 +224,9 @@ function awmShowInputs() {
 }
 
 
-function awm_create_calendar() {
-  jQuery('.awm_cl_date:not(.hasDatepicker)').each(function () {
-  
-    var idd = jQuery(this).attr('id');
-    var parameters = {
-      dateFormat: 'dd-mm-yy',
-      changeMonth: true
-    }
-    if (!jQuery('.awm-no-limit-date').length) {
-      parameters.minDate = 0;
-    }
-    jQuery('#' + idd).datepicker(parameters);
-  });
-
-
-
-
-
-}
 
 function awm_create_calendar() {
+  var values=[];
   jQuery('.awm_cl_date:not(.hasDatepicker)').each(function () {
     var idd = jQuery(this).attr('id');
 
@@ -270,11 +252,18 @@ function awm_create_calendar() {
 
       };
     }
-    jQuery('#' + idd).datepicker(parameters);
-  });
+    values.push({'id':idd,'value':jQuery('#'+idd).val()});
 
+    jQuery('#' + idd).datepicker(parameters);
+    
+  }
+
+  );
+  
+ 
 
   jQuery(document).on('change', 'input.awm_cl_date.hasDatepicker', function () {
+    console.log('n')
     var stop = false;
     var date = jQuery(this).datepicker('getDate');
     var change = jQuery(this).attr('data-change');
@@ -292,6 +281,13 @@ function awm_create_calendar() {
         jQuery('#' + change).datepicker('setDate', date);
       }
 
+    }
+  });
+
+  values.forEach(function (val) {
+    if (val.value != '') {
+      jQuery('#' + val.id).datepicker('setDate', val.value);
+      jQuery('#' + val.id).change();
     }
   });
 }
