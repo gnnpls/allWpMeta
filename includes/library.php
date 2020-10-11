@@ -807,25 +807,30 @@ $defaults=array(
     'method'=>'post',
     'action'=>'',
     'submit'=>true,
-    'submit_label'=>__('Register','awm')
+    'submit_label'=>__('Register','awm'),
+    'nonce'=>true
 );
 
 $settings=array_merge($defaults,$options);
+$library=$settings['library'];
 
-if ($settings['submit'])
-{
-
-$library['submit']=array(
-      'case'=>'input',
-      'type'=>'submit',
-      'attributes'=>array('value'=>$submit_label)
-);
-}
 ob_start();
 ?>
 <form id="<?php echo $settings['id'];?>" action="<?php echo $settings['action'];?>" method="<?php echo $post;?>">
-    <?php wp_nonce_field( $settings['id'], 'awm_form_nonce_field' ); ?>
-    <?php echo awm_show_content($settings['library']);?>
+    <?php 
+    if ($settings['nonce'])
+    {
+    wp_nonce_field( $settings['id'], 'awm_form_nonce_field' );
+    }
+    ?>
+    <?php echo awm_show_content($library);?>
+    <?php if ($settings['submit'])
+    {
+        ?>
+        <input type="submit" id="awm-submit-<?php echo $settings['id']?>" value="<?php echo $settings['submit_label'];?>"/>
+        <?php
+    }
+    ?>
 </form>
 <?php
 $content=ob_get_contents();
