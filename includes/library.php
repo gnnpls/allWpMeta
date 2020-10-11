@@ -796,21 +796,36 @@ function awm_admin_post_columns()
 
 /**
  * this funciton is used to creat a form for the fields we add
+ * @param array $data all the data needed
  */
-function awm_create_form($library,$id,$method='post',$action='',$submit_label='')
+function awm_create_form($options)
 {
-$submit=$submit_label!='' ? $submit_label : __('Submit','awm');  
+
+$defaults=array(
+    'library'=>'',
+    'id'=>'',
+    'method'=>'post',
+    'action'=>'',
+    'submit'=>true,
+    'submit_label'=>__('Register','awm')
+);
+
+$settings=array_merge($defaults,$options);
+
+if ($settings['submit'])
+{
 
 $library['submit']=array(
       'case'=>'input',
       'type'=>'submit',
-      'attributes'=>array('value'=>__('Register','filox'))
+      'attributes'=>array('value'=>$submit_label)
 );
+}
 ob_start();
 ?>
-<form id="<?php echo $id;?>" action="<?php echo $action;?>" method="<?php echo $post;?>">
-    <?php wp_nonce_field( $id, 'awm_form_nonce_field' ); ?>
-    <?php echo awm_show_content($library);?>
+<form id="<?php echo $settings['id'];?>" action="<?php echo $settings['action'];?>" method="<?php echo $post;?>">
+    <?php wp_nonce_field( $settings['id'], 'awm_form_nonce_field' ); ?>
+    <?php echo awm_show_content($settings['library']);?>
 </form>
 <?php
 $content=ob_get_contents();
