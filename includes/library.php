@@ -256,7 +256,10 @@ function awm_show_content($arrs, $id = 0, $view = 'post', $target = 'edit', $lab
                                 $checkboxOptions = array();
                                 $ins.='<div class="awm-options-wrapper">';
                                 if (isset($a['options']) && !empty($a['options'])) {
+                                    if (!isset($a['disable_apply_all']))
+                                    {
                                     $checkboxOptions['awm_apply_all'] = array('label' => __('Select All', 'all-wp-meta'), 'extra_label' => __('Deselect All', 'all-wp-meta'));
+                                    }
                                     $checkboxOptions = $checkboxOptions + $a['options'];
                                     foreach ($checkboxOptions as $dlm => $dlmm) {
                                         $chk_ex = '';
@@ -796,21 +799,41 @@ function awm_admin_post_columns()
 
 /**
  * this funciton is used to creat a form for the fields we add
+ * @param array $data all the data needed
  */
-function awm_create_form($library,$id,$method='post',$action='',$submit_label='')
+function awm_create_form($options)
 {
-$submit=$submit_label!='' ? $submit_label : __('Submit','awm');  
 
-$library['submit']=array(
-      'case'=>'input',
-      'type'=>'submit',
-      'attributes'=>array('value'=>__('Register','filox'))
+$defaults=array(
+    'library'=>'',
+    'id'=>'',
+    'method'=>'post',
+    'action'=>'',
+    'submit'=>true,
+    'submit_label'=>__('Register','awm'),
+    'nonce'=>true
 );
+
+$settings=array_merge($defaults,$options);
+$library=$settings['library'];
+
 ob_start();
 ?>
-<form id="<?php echo $id;?>" action="<?php echo $action;?>" method="<?php echo $post;?>">
-    <?php wp_nonce_field( $id, 'awm_form_nonce_field' ); ?>
+<form id="<?php echo $settings['id'];?>" action="<?php echo $settings['action'];?>" method="<?php echo $post;?>">
+    <?php 
+    if ($settings['nonce'])
+    {
+    wp_nonce_field( $settings['id'], 'awm_form_nonce_field' );
+    }
+    ?>
     <?php echo awm_show_content($library);?>
+    <?php if ($settings['submit'])
+    {
+        ?>
+        <input type="submit" id="awm-submit-<?php echo $settings['id']?>" value="<?php echo $settings['submit_label'];?>"/>
+        <?php
+    }
+    ?>
 </form>
 <?php
 $content=ob_get_contents();
