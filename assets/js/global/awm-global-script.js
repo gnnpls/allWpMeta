@@ -263,9 +263,9 @@ function awm_create_calendar() {
  
 
   jQuery(document).on('change', 'input.awm_cl_date.hasDatepicker', function () {
-    console.log('n')
     var stop = false;
     var date = jQuery(this).datepicker('getDate');
+    if (date!==null){
     var change = jQuery(this).attr('data-change');
     if (change != '') {
       var next_date = jQuery('#' + change).datepicker('getDate');
@@ -280,7 +280,7 @@ function awm_create_calendar() {
       if (stop) {
         jQuery('#' + change).datepicker('setDate', date);
       }
-
+    }
     }
   });
 
