@@ -90,7 +90,8 @@ if (!function_exists('awmTaxonomyFieldsForInput'))
             'orderby'       => 'id', 
             'order'         => 'ASC',
             'hide_empty'    => false,
-            'fields'        => 'all'
+            'fields'        => 'all',
+             'suppress_filter' => false,
         );
         if (!empty($args))
         {

@@ -39,5 +39,9 @@ add_action('create_term', function ($term_id, $taxonomy) {
      */
     function awm_options_callback()
     {
+        ob_start();
         include  awm_path . 'includes/admin/settings.php';
+        $content = ob_get_contents();
+        ob_end_clean();
+        echo $content;
     }
