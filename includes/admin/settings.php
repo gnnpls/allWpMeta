@@ -2,13 +2,13 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+
 wp_enqueue_media();
 global $pagenow;
 $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
 $allWpMeta = new all_WP_Meta();
 $options = $allWpMeta->options_boxes();
-
-if (!empty($page) && $pagenow == 'admin.php') {
+if (!empty($page) && ($pagenow == 'admin.php' || $pagenow== 'options-general.php')) {
     $awm_settings = $options[$page];
     $awm_settings['id'] = $page;
 ?>

@@ -841,3 +841,4 @@ function awm_create_form($options)
     ob_end_clean();
     return $content;
 }
+

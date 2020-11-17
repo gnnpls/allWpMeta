@@ -246,6 +246,7 @@ class all_WP_Meta
     {
         global $pagenow;
         $optionsPages = $this->options_boxes();
+       
         if (!empty($optionsPages))
         {
             foreach ($optionsPages as $optionKey=>$optionData)
