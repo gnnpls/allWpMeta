@@ -232,8 +232,12 @@ function awm_create_calendar() {
 
     var parameters = {
       dateFormat: 'dd-mm-yy',
+<<<<<<< HEAD
       changeMonth: false,
       altFormat:'YYYY-DD-MM'
+=======
+      changeMonth: false
+>>>>>>> 7dd3593cf3ccae4e4c35a7ce8de6239f93a2d0b3
     }
 
     if (jQuery(this).attr('max-date')) {
@@ -241,8 +245,13 @@ function awm_create_calendar() {
     }
 
 
+<<<<<<< HEAD
     if (jQuery(this).hasClass('awm-no-limit-date')) {
       parameters.minDate = null;
+=======
+    if (!jQuery(this).hasClass('awm-no-limit-date')) {
+      parameters.minDate = 0;
+>>>>>>> 7dd3593cf3ccae4e4c35a7ce8de6239f93a2d0b3
     }
 
     if (jQuery(this).hasClass('awm-cl-enable-trigger')) {
