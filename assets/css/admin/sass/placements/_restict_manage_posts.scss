@@ -3,9 +3,10 @@
   margin: 0px 5px;
   width: auto;
   display: inline-block;
+  min-width:100px;
+  max-width:200px;
   label {
    display: none !important;
   }
  }
-
 }

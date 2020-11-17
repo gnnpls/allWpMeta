@@ -8,6 +8,7 @@ add_action('rest_api_init', function () {
     register_rest_route('all-wp-meta', '/awm-map-options', array(
             'methods' => 'GET',
             'callback' => 'awm_map_options_func',
+            "permission_callback" => function(){return true;}
         ));
 }, 10, 1);
 

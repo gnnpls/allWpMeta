@@ -8,6 +8,7 @@ class all_WP_Meta
 
     public function init()
     {
+        define('AWM_JQUERY_LOAD',apply_filters('awm_jquery_load_filter',true));
         require_once awm_path.'/languages/strings.php';
         require_once awm_path.'/includes/main.php';
         require_once awm_path.'/includes/gallery-meta-box/gallery-meta-box.php';
@@ -42,9 +43,14 @@ class all_WP_Meta
      * enquee scripts and styles
      */
     public function enqueue_styles_script()
-    {
-        wp_enqueue_style('awm-global-style');
+    {   if (AWM_JQUERY_LOAD)
+        {
+        wp_enqueue_script( 'jquery-ui-datepicker' );
+        wp_enqueue_style( 'jquery-ui-awm');
+        }
+        wp_enqueue_style('awm-global-style');        
         wp_enqueue_script('awm-global-script');
+        wp_enqueue_script('awm-public-script');
     }
     /**
      * init function
@@ -75,9 +81,11 @@ class all_WP_Meta
         wp_register_style('awm-global-style', awm_url . 'assets/css/global/awm-global-style.min.css', false, '1.0.0');
         wp_register_style('awm-admin-style', awm_url . 'assets/css/admin/awm-admin-style.min.css', false, '1.0.0');
         wp_register_script('awm-global-script', awm_url . 'assets/js/global/awm-global-script.js', array(), false, true);
+        wp_register_script('awm-public-script', awm_url . 'assets/js/public/awm-public-script.js', array(), false, true);
         wp_localize_script('awm-global-script', 'awmGlobals', array('url' => esc_url(site_url())));
         wp_register_script('awm-admin-script', awm_url . 'assets/js/admin/awm-admin-script.js', array(), false, true);
         wp_register_script('awm-slim-lib-script', 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.18.10/slimselect.min.js', array(), false, true);
+        wp_register_style('jquery-ui-awm', apply_filters('jquery_ui_awm_filter','https://code.jquery.com/ui/1.12.1/themes/pepper-grinder/jquery-ui.css'));
     }
 
 
@@ -86,10 +94,23 @@ class all_WP_Meta
      */
     public function awm_pre_get_posts($query)    {
         global $pagenow;
-        if (!isset($_GET['awm_restict_post_list']) || empty($_GET['awm_restict_post_list'])) {
+        if (!isset($_REQUEST['awm_restict_post_list']) || empty($_REQUEST['awm_restict_post_list'])) {
             return;
         }
-        if ($query->is_main_query() && is_admin()) {
+        $lists= $_REQUEST['awm_restict_post_list'];
+        $registered=$this->restrict_post_forms();
+        if ($query->is_main_query() && is_admin() && $pagenow=='edit.php') {
+            foreach ($lists as $list)
+                {
+                    if (isset($registered[$list]))
+                    {
+                        if (isset($registered[$list]['callback']) && function_exists($registered[$list]['callback']))
+                        {
+                        $query=call_user_func_array($registered[$list]['callback'], array($query));
+                        }
+                        
+                    }
+                }
             }
         return $query;
     }
@@ -104,9 +125,22 @@ class all_WP_Meta
      *
      * @return array
      */
-    protected function options_boxes()
+    public function options_boxes()
     {
-        return apply_filters('awm_add_options_boxes_filter',array());
+        $optionsPages= apply_filters('awm_add_options_boxes_filter', array());
+        /**
+         * sort settings by order
+         */
+        if (!empty($optionsPages))
+        {
+        uasort($optionsPages, function ($a, $b) {
+            $first = isset($a['order']) ? $a['order'] : 100;
+            $second = isset($b['order']) ? $b['order'] : 100;
+            return $first - $second;
+        });
+        }
+
+        return $optionsPages;
     }
 
 
@@ -135,7 +169,18 @@ class all_WP_Meta
      */
     protected function restrict_post_forms()
     {
-        return apply_filters('awm_restrict_post_boxes_filter',array());
+        $restrict_forms= apply_filters('awm_restrict_post_boxes_filter', array());
+        /**
+         * sort settings by order
+         */
+
+        uasort($restrict_forms, function ($a, $b) {
+            $first = isset($a['order']) ? $a['order'] : 100;
+            $second = isset($b['order']) ? $b['order'] : 100;
+            return $first - $second;
+        });
+
+        return $restrict_forms;
     }
 
 
@@ -147,15 +192,7 @@ class all_WP_Meta
         $restrict_post_forms = $this->restrict_post_forms();
          if (!empty($restrict_post_forms))
         {
-            /**
-             * sort settings by order
-             */
-
-            uasort($restrict_post_forms, function ($a, $b) {
-                $first=isset($a['order']) ? $a['order'] : 100;
-                    $second=isset($b['order']) ? $b['order'] : 100;
-                    return $first-$second;
-                });
+            
             $post_type=$_GET['post_type'] ? $_GET['post_type'] : 'post';
             
             foreach ($restrict_post_forms as $optionKey=>$optionData)
@@ -168,7 +205,7 @@ class all_WP_Meta
                             $library[$key]=$data;
                             $library[$key]['exclude_meta']=true;
                         }
-                        $library['awm_restict_post_list']=array('case'=>'input','type'=>'hidden','exclude_meta'=>true,'attributes'=>array('value'=>$optionKey));
+                        $library['awm_restict_post_list[]']=array('case'=>'input','type'=>'hidden','exclude_meta'=>true,'attributes'=>array('value'=>$optionKey));
                         echo awm_show_content($library,0,'restrict_manage_posts');
                     }
                 }
@@ -183,14 +220,7 @@ class all_WP_Meta
         $optionsPages = $this->options_boxes();
         if (!empty($optionsPages))
         {
-            /**
-             * sort settings by order
-             */
-            uasort($optionsPages, function ($a, $b) {
-                $first=isset($a['order']) ? $a['order'] : 100;
-                $second=isset($b['order']) ? $b['order'] : 100;
-                return $first-$second;
-            });
+            
 
             foreach ($optionsPages as $optionKey=>$optionData)
             {

@@ -2,11 +2,11 @@
 
 awm_add_map();
 awmCallbacks();
-
+awm_create_calendar();
 awmSelectrBoxes();
 awmInitForms();
 awmMultipleCheckBox();
-awm_create_calendar();
+
 awm_add_drags();
 
 jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
@@ -231,19 +231,7 @@ function noenter() {
 
 
 
-function awm_create_calendar() {
-  jQuery('.awm_cl_date:not(.hasDatepicker)').each(function () {
-    var idd = jQuery(this).attr('id');
-    var parameters = {
-      dateFormat: 'dd-mm-yy',
-      changeMonth: true
-    }
-    if (!jQuery('.awm-no-limit-date').length) {
-      parameters.minDate = 0;
-    }
-    jQuery('#' + idd).datepicker(parameters);
-  });
-}
+
 
 function awmSelectrBoxes()
 {
