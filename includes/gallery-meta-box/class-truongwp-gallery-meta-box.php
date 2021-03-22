@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Gallery meta box class.
  */
@@ -14,7 +15,7 @@ class Truongwp_Gallery_Meta_Box
         add_action('add_meta_boxes', array($this, 'add'));
 
         foreach ($this->post_types() as $post_type) {
-            add_action('save_post_'.$post_type, array($this, 'save'), 10, 3);
+            add_action('save_post_' . $post_type, array($this, 'save'), 10, 3);
         }
         add_action('admin_enqueue_scripts', array($this, 'enqueue'));
 
@@ -29,8 +30,11 @@ class Truongwp_Gallery_Meta_Box
         if (!$this->is_editing_screen()) {
             return;
         }
-       wp_enqueue_style('truongwp-gallery-meta-box', TRUONGWP_GALLERY_META_BOX_URL.'css/gallery-meta-box.css', array(), false);
-        wp_enqueue_script('truongwp-gallery-meta-box', TRUONGWP_GALLERY_META_BOX_URL.'js/gallery-meta-box.js', array('backbone', 'jquery'), false, true);
+        if (!did_action('wp_enqueue_media')) {
+            wp_enqueue_media();
+        }
+        wp_enqueue_style('truongwp-gallery-meta-box', TRUONGWP_GALLERY_META_BOX_URL . 'css/gallery-meta-box.css', array(), false);
+        wp_enqueue_script('truongwp-gallery-meta-box', TRUONGWP_GALLERY_META_BOX_URL . 'js/gallery-meta-box.js', array('backbone', 'jquery'), false, true);
     }
 
     /**
@@ -123,44 +127,50 @@ class Truongwp_Gallery_Meta_Box
      */
     public function render($post)
     {
+
         wp_nonce_field('gallery_meta_box', 'gallery_meta_box_nonce');
         $ids = get_post_meta($post->ID, $this->meta_key(), true);
         if (!$ids) {
             $ids = array();
         } ?>
-		<div id="truongwp-gallery-container" class="gallery">
-			<?php foreach ($ids as $id): ?>
-				<div id="gallery-image-<?php echo absint($id); ?>" class="gallery-item">
-					<?php echo wp_get_attachment_image($id, 'thumbnail'); ?>
+        <div id="truongwp-gallery-container" class="gallery">
+            <?php foreach ($ids as $id) : ?>
+                <div id="gallery-image-<?php echo absint($id); ?>" class="gallery-item">
+                    <?php echo wp_get_attachment_image($id, 'thumbnail'); ?>
 
-					<a href="#" class="gallery-remove">&times;</a>
+                    <a href="#" class="gallery-remove">&times;</a>
 
-					<input type="hidden" name="gallery_meta_box[]" value="<?php echo absint($id); ?>">
-				</div>
-			<?php endforeach; ?>
-		</div>
+                    <input type="hidden" name="gallery_meta_box[]" value="<?php echo absint($id); ?>">
+                </div>
+            <?php endforeach; ?>
+        </div>
 
-		<a href="#" id="truongwp-add-gallery"><?php esc_html_e('Set gallery images', 'gallery-meta-box'); ?></a>
+        <a href="#" id="truongwp-add-gallery"><?php esc_html_e('Set gallery images', 'gallery-meta-box'); ?></a>
 
-		<input type="hidden" id="truongwp-gallery-ids" value="<?php echo esc_attr(implode(',', $ids)); ?>">
-		<?php
+        <input type="hidden" id="truongwp-gallery-ids" value="<?php echo esc_attr(implode(',', $ids)); ?>">
+    <?php
     }
 
     public function js_template()
     {
         if (!$this->is_editing_screen()) {
             return;
-        } ?>
-		<script type="text/html" id="tmpl-gallery-meta-box-image">
-			<div id="gallery-image-{{{ data.id }}}" class="gallery-item">
-				<img src="{{{ data.url }}}">
+        }
 
-				<a href="#" class="gallery-remove">&times;</a>
 
-				<input type="hidden" name="gallery_meta_box[]" value="{{{ data.id }}}">
-			</div>
-		</script>
-		<?php
+
+    ?>
+
+        <script type="text/html" id="tmpl-gallery-meta-box-image">
+            <div id="gallery-image-{{{ data.id }}}" class="gallery-item">
+                <img src="{{{ data.url }}}">
+
+                <a href="#" class="gallery-remove">&times;</a>
+
+                <input type="hidden" name="gallery_meta_box[]" value="{{{ data.id }}}">
+            </div>
+        </script>
+<?php
     }
 
     /**

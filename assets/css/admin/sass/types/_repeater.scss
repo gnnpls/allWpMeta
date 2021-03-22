@@ -1,8 +1,11 @@
 .awm-repeater {
 
 
- .awm-repeater-content {
+.awm-repeater-contents{
+ position:relative;
+}
 
+ .awm-repeater-content {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -27,15 +30,12 @@
   padding: 5px 10px;
   background: rgba(0, 0, 0, 0.05);
   margin-top: 15px;
-  z-index:1;
-
-
 
   .awm-meta-field {
    border-bottom: none !important;
    padding-bottom: 5px;
    margin-bottom: 5px;
-
+   position:relative;
   }
 
 
@@ -92,18 +92,7 @@
   transform: scale(1.1, 1.1);
  }
 
- .awm-repeater-inputs {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  grid-column-gap: 5px;
-  width: 100%;
-  margin-bottom: 5px;
 
-  .awm-meta-field {
-   width: 100% !important;
-  }
- }
 
  &[data-count="2"] {
   .awm-repeater-inputs {
@@ -138,12 +127,10 @@
 }
 
 .awm-repeater-content[draggable] {
- will-change: transform;
  cursor: move;
  transition: all 200ms;
  user-select: none;
  margin: 10px auto;
- position: relative;
 }
 
 

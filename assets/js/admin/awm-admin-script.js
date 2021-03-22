@@ -1,58 +1,18 @@
 /*inits*/
 
+function awm_init_inputs()
+{
 awm_add_map();
 awmCallbacks();
 awm_create_calendar();
 awmSelectrBoxes();
 awmInitForms();
 awmMultipleCheckBox();
-
 awm_add_drags();
+awm_repeater_actions();
+}
 
-jQuery(document).on('click', '.awm-repeater-contents .awm_action', function () {
-
-  var repeater = jQuery(this).closest('.awm-repeater').attr('data-id');
-   var maxRows = jQuery(this).closest('.awm-repeater').attr('maxrows') ? parseInt(jQuery(this).closest('.awm-repeater').attr('maxrows')) : 0;
-
-  if (jQuery(this).hasClass('awm-add')) {
-    var old_counter = parseInt(jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content:last').attr('data-counter'));
-
-    var new_counter = old_counter + 1;
-    if (maxRows == 0 || new_counter < maxRows) {
-          jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content:last').clone().addClass('cloned').appendTo('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-contents');
-      jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').attr('data-counter', new_counter);
-      jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').find('input,select,textarea').each(function () {
-        jQuery(this).val('');
-        jQuery(this).prop('checked',false);
-        var namee, id;
-        if (jQuery(this).attr("name")) {
-          namee = jQuery(this).attr("name").replace("[" + old_counter + "]", "[" + new_counter + "]");
-          id = namee.replace(/\[/g, '_').replace(/\]/g, '_');
-          jQuery(this).attr("name", namee).attr("id", id);
-
-        }
-
-        if (jQuery(this).closest('.awm-meta-field').hasClass('awm-custom-image-meta')) {
-          jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-custom-image-meta').attr('data-input', id);
-          jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-image-upload').attr('id', 'awm_image' + id);
-          jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] .awm-image-upload .awm_custom_image_remove_image_button').trigger('click');
-        }
-      });
-      jQuery('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content.cloned').removeClass('cloned');
-
-      jQuery('.awm-repeater-content[data-counter="' + new_counter + '"] input.hasDatepicker').removeClass('hasDatepicker');
-      repeaterInit();
-    }
-  } else {
-    jQuery(this).closest('.awm-repeater[data-id="' + repeater + '"] .awm-repeater-content').remove();
-    jQuery(this).closest('.awm-repeater[data-id="' + repeater + '"] input,.awm-repeater[data-id="' + repeater + '"] select,.awm-repeater[data-id="' + repeater + '"] textarea').trigger('change');
-  }
-
-});
-
-
-
-
+awm_init_inputs();
 
 /*
  * Select/Upload image(s) event
@@ -87,7 +47,7 @@ jQuery(document).on('click', '.awm_custom_image_upload_image_button', function (
       }
 
     })
-    .open();
+      .open();
 });
 
 /*
@@ -233,27 +193,24 @@ function noenter() {
 
 
 
-function awmSelectrBoxes()
-{
+function awmSelectrBoxes() {
   var elems = document.querySelectorAll('.awm-meta-field select');
-  if (elems)
-  {
-    elems.forEach(function(elem){
+  if (elems) {
+    elems.forEach(function (elem) {
+      if (elem.id!='' && !elem.getAttribute('data-ssid'))
+      {
+        var showSearch = elem.length>3 ? true : false;
       var slim = new SlimSelect({
-        select: '#'+elem.id,
-        showSearch: true
-      })
+        select: elem,
+        showSearch: showSearch
+      });
+      }
     });
   }
 }
 
-function repeaterInit(){
-  awm_create_calendar();
-  awmSelectrBoxes();
-  awmInitForms();
-  awmCallbacks();
-  awm_add_drags();
-  
+function repeaterInit() {
+  awm_init_inputs();
 }
 
 
@@ -276,8 +233,9 @@ function awmMultipleCheckBox() {
                   checkbox.checked = checked;
                 }
               });
-              input.setAttribute('data-extra', document.getElementById('label_' + input.id).innerText);
-              document.getElementById('label_' + input.id).innerText = text;
+              var element_to_change = document.querySelector('#label_' + input.id + ' span');
+              input.setAttribute('data-extra', element_to_change.innerText);
+              element_to_change.innerText = text;
             });
           }
         });
@@ -335,33 +293,30 @@ function addEventsDragAndDrop(el) {
 }
 
 
-function awm_add_drags()
-{
+function awm_add_drags() {
   var repeaters = document.querySelectorAll('.repeater.awm-meta-field');
-  if (repeaters)
-  {
-    [].forEach.call(repeaters,function(repeater){
-    var group=repeater.getAttribute('data-input');
-    var counter=0;
-    var listItens = repeater.querySelectorAll('.awm-repeater-content[draggable]');
-    [].forEach.call(listItens, function (item) {
-      var old_counter=item.getAttribute('data-counter');  
-      item.id='awm-'+group+'-'+counter;
-      item.setAttribute('data-counter',counter);
-      var inputs=item.querySelectorAll('input,select,textarea');
-      if (inputs)
-      {
-        [].forEach.call(inputs, function (input) {
-          if (input.getAttribute('data-unique') && input.value=='') {
-            input.value = Date.now();
-          }
-          input.setAttribute('name',input.name.replace("[" + old_counter + "]", "[" + counter + "]"));
-        });
-      }
-      addEventsDragAndDrop(item);
-      counter++;
-    });
-  })
-  
+  if (repeaters) {
+    [].forEach.call(repeaters, function (repeater) {
+      var group = repeater.getAttribute('data-input');
+      var counter = 0;
+      var listItens = repeater.querySelectorAll('.awm-repeater-content[draggable]');
+      [].forEach.call(listItens, function (item) {
+        var old_counter = item.getAttribute('data-counter');
+        item.id = 'awm-' + group + '-' + counter;
+        item.setAttribute('data-counter', counter);
+        var inputs = item.querySelectorAll('input,select,textarea');
+        if (inputs) {
+          [].forEach.call(inputs, function (input) {
+            if (input.getAttribute('data-unique') && input.value == '') {
+              input.value = Date.now();
+            }
+            input.setAttribute('name', input.name.replace("[" + old_counter + "]", "[" + counter + "]"));
+          });
+        }
+        addEventsDragAndDrop(item);
+        counter++;
+      });
+    })
+
   }
 }

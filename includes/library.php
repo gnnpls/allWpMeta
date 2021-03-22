@@ -16,15 +16,23 @@ if (!function_exists('awm_show_content')) {
         $msg = array();
         global $awm_post_id;
         $awm_post_id = $id;
+        $awm_id = '';
+        if (isset($arrs['awm-id'])) {
+            $awm_id = $arrs['awm-id'];
+            unset($arrs['awm-id']);
+        }
         uasort($arrs, function ($a, $b) {
             if (isset($a['order']) && isset($b['order'])) {
                 return $a['order'] - $b['order'];
             }
         });
+        $meta_counter = 0;
+
         foreach ($arrs as $n => $a) {
             /*check if hidden val or not*/
             $required = (isset($a['required']) && $a['required']) ? 'required="true"' : false;
             $original_meta = $n;
+            $display_wrapper = true;
             $ins = '';
             $label = isset($a['label']) ? $a['label'] : $n;
             if (substr($n, 0, 1) === '_') {
@@ -45,21 +53,23 @@ if (!function_exists('awm_show_content')) {
                             $a['case'] = isset($a['view']) ? $a['view'] : 'select';
                             $number = isset($a['number']) ? $a['number'] : '-1';
                             $args = isset($a['args']) ? $a['args'] : array();
-                            $a['options'] = awmPostFieldsForInput($a['post_type'], $number, $args);
+                            $a['callback'] = 'awmPostFieldsForInput';
+                            $a['callback_variables'] = array($a['post_type'], $number, $args);
                             break;
                         case 'term':
                             $a['case'] = isset($a['view']) ? $a['view'] : 'select';
-
                             $number = isset($a['number']) ? $a['number'] : '-1';
                             $args = isset($a['args']) ? $a['args'] : array();
                             $option_key = isset($a['option_key']) ? $a['option_key'] : 'term_id';
-                            $a['options'] = awmTaxonomyFieldsForInput($a['taxonomy'], $number, $option_key, $args);
+                            $a['callback'] = 'awmTaxonomyFieldsForInput';
+                            $a['callback_variables'] = array($a['taxonomy'], $number, $option_key, $args, $awm_id);
                             break;
                         case 'user':
                             $a['case'] = isset($a['view']) ? $a['view'] : 'select';
                             $number = isset($a['number']) ? $a['number'] : '-1';
                             $args = isset($a['args']) ? $a['args'] : array();
-                            $a['options'] = awmUserFieldsForInput($a['roles'], $number, $args);
+                            $a['callback'] = 'awmUserFieldsForInput';
+                            $a['callback_variables'] = array($a['roles'], $number, $args);
                             break;
                         case 'date':
                             $a['case'] = 'input';
@@ -68,7 +78,11 @@ if (!function_exists('awm_show_content')) {
                             break;
                         case 'html':
                             if (isset($a['value']) && !empty($a['value'])) {
-                                return '<div class="awm-meta-html" id="' . $n . '">' . $a['value'] . '</div>';
+                                $msg[] = '<div class="awm-meta-html awm-meta-field" id="' . $n . '">' . $a['value'] . '</div>';
+                                $stop = true;
+                                if (isset($a['strip'])) {
+                                    $msg = array($a['value']);
+                                }
                             }
                             break;
                         default:
@@ -81,7 +95,7 @@ if (!function_exists('awm_show_content')) {
                     $class = isset($a['class']) ? implode(' ', $a['class']) : '';
                     switch ($view) {
                         case 'widget':
-                            $val = isset($id[$n]) ? $id[$n] : '';
+                            $val = isset($id[$a['widget-key']]) ? $id[$a['widget-key']] : '';
                             break;
                         case 'user':
                             $val = get_user_meta($id, $original_meta, true) ?: '';
@@ -136,11 +150,6 @@ if (!function_exists('awm_show_content')) {
                                         case 'checkbox':
                                             $val = $val == 1 ? awm_Yes : awm_No;
                                             break;
-                                        case 'hidden':
-                                            if ($d == 1) {
-                                                $ins .= '<input type="' . $a[2] . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '"/>';
-                                            }
-                                            break;
                                         default:
                                             break;
                                     }
@@ -149,6 +158,13 @@ if (!function_exists('awm_show_content')) {
                                 case 'select':
                                     $old_val = $val;
                                     $val = array();
+                                    if (isset($a['callback'])) {
+                                        $callback_options = array();
+                                        if (!empty($a['callback_variables'])) {
+                                            $callback_options = call_user_func_array($a['callback'], $a['callback_variables']);
+                                        }
+                                        $a['options'] = empty($callback_options) ? call_user_func($a['callback']) : $callback_options;
+                                    }
                                     if (!empty($a['options']) && !empty($old_val)) {
                                         foreach ($a['options'] as $vv => $vvv) {
                                             if (is_array($old_val)) {
@@ -172,12 +188,6 @@ if (!function_exists('awm_show_content')) {
                                     break;
                             }
 
-                            if ($d == 1) {
-                                $label_class[] = 'awm_no_show';
-                                $ins .= '<div class="ss1">' . $a['label'] . '</div><div class="ss2" id="' . $n . '">' . $val . '</div>';
-                            } else {
-                                $msg[$n] = array('value' => $val, 'label' => $a['label']);
-                            }
                             break;
                         case 'read':
                             /*case to return the meta in array*/
@@ -190,9 +200,9 @@ if (!function_exists('awm_show_content')) {
                             }
 
                             /*display input fields*/
-
-                            if (!in_array($a['case'], array('checkbox_multiple', 'repeater', 'awm_tab')) || (isset($a['type']) && $a['type'] != 'submit')) {
-                                if ($label && $view != 'none') {
+                            $hide_label = isset($a['hide-label']) ? $a['hide-label'] : false;
+                            if (!$hide_label && $label && !in_array($a['case'], array('checkbox_multiple', 'repeater', 'awm_tab', 'button'))) {
+                                if (($a['case'] == 'input' && isset($a['type']) && $view != 'none' && !in_array($a['type'], array('submit', 'hidden', 'button'))) || ($a['case'] == 'select' || $a['case'] == 'textarea')) {
                                     $ins .= '<label for="' . $original_meta_id . '" class="awm-input-label"><span>' . $label . '</span></label>';
                                 }
                             }
@@ -229,10 +239,10 @@ if (!function_exists('awm_show_content')) {
                                     $ins = '<a href="' . $link . '" id="' . $n . '" title="' . $a['label'] . '" class="' . $class . '" ' . $extraa . '>' . $a['label'] . '</a>';
                                     break;
                                 case 'input':
-                                    $label_class[] = 'awm-cls-33';
                                     $input_type = $a['type'];
                                     $after_message = (isset($a['after_message']) && !empty($a['after_message'])) ? '<span class="awm-after-message"><label for="' . $original_meta_id . '">' . $a['after_message'] . '</span></label>' : '';
-                                    switch ($a['type']) {
+
+                                    switch ($input_type) {
                                         case 'number':
                                             $val = (int) $val;
                                             break;
@@ -243,20 +253,32 @@ if (!function_exists('awm_show_content')) {
                                             $val = 1;
                                             break;
                                         case 'hidden':
-                                            $label_class[] = 'awm_no_show';
+                                            $ins .= '<input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/>';
+                                            $display_wrapper = false;
                                             break;
                                         default:
                                             break;
                                     }
-                                    $ins .= '<div class="input-wrapper">';
-                                    $ins .= '<input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/>' . $after_message;
-                                    if ($a['type'] == 'password') {
-                                        $ins .= '<div class="eye" data-toggle="password" data-id="' . $original_meta_id . '"></div>';
+                                    if ($display_wrapper) {
+                                        $input_html = '<input type="' . $input_type . '" name="' . $original_meta . '" id="' . $original_meta_id . '" value="' . $val . '" ' . $extraa . ' class="' . $class . '" ' . $required . '/>';
+
+                                        $ins .= '<div class="input-wrapper">';
+                                        $ins .=  $input_html . $after_message;
+                                        if ($a['type'] == 'password') {
+                                            $ins .= '<div class="eye" data-toggle="password" data-id="' . $original_meta_id . '"></div>';
+                                        }
+                                        $ins .= '</div>';
                                     }
-                                    $ins .= '</div>';
 
                                     break;
                                 case 'checkbox_multiple':
+                                    if (isset($a['callback'])) {
+                                        $callback_options = array();
+                                        if (!empty($a['callback_variables'])) {
+                                            $callback_options = call_user_func_array($a['callback'], $a['callback_variables']);
+                                        }
+                                        $a['options'] = empty($callback_options) ? call_user_func($a['callback']) : $callback_options;
+                                    }
                                     $ins .= '<label><span>' . $a['label'] . '</span></label>';
                                     $checkboxOptions = array();
                                     $ins .= '<div class="awm-options-wrapper">';
@@ -283,6 +305,13 @@ if (!function_exists('awm_show_content')) {
                                 case 'select':
                                     if ($val != '' && !is_array($val)) {
                                         $val = array($val);
+                                    }
+                                    if (isset($a['callback'])) {
+                                        $callback_options = array();
+                                        if (!empty($a['callback_variables'])) {
+                                            $callback_options = call_user_func_array($a['callback'], $a['callback_variables']);
+                                        }
+                                        $a['options'] = empty($callback_options) ? call_user_func($a['callback']) : $callback_options;
                                     }
                                     $select_name = $original_meta;
                                     $label_class[] = 'awm-cls-33';
@@ -316,6 +345,9 @@ if (!function_exists('awm_show_content')) {
 
                                     break;
                                 case 'image':
+                                    if (!did_action('wp_enqueue_media')) {
+                                        wp_enqueue_media();
+                                    }
                                     $multiple = isset($a['multiple']) ? $a['multiple'] : false;
                                     $ins .= awm_custom_image_image_uploader_field($original_meta, $original_meta_id, $val, $multiple, $required);
                                     $label_class[] = 'awm-custom-image-meta';
@@ -355,10 +387,10 @@ if (!function_exists('awm_show_content')) {
                                     $label_class[] = 'awm-section-field';
                                     $ins .= '<div class="awm-inner-section"><div class="awm-inner-section-content">';
                                     foreach ($a['include'] as $key => $data) {
-                                        $inputname = $original_meta_id . '[' . $key . ']';
-                                        $data['attributes']['id'] = $original_meta_id . '_' . $key;
-                                        $data['attributes']['exclude_meta'] = true;
 
+                                        $inputname = !isset($a['keep_inputs']) ? $original_meta_id . '[' . $key . ']' : $key;
+                                        $data['attributes']['id'] = isset($a['keep_inputs']) ? $original_meta_id . '_' . $key : $key;
+                                        $data['attributes']['exclude_meta'] = true;
                                         $ins .= awm_show_content(array($inputname => $data));
                                     }
                                     $ins .= '</div></div>';
@@ -379,7 +411,7 @@ if (!function_exists('awm_show_content')) {
                                             $style = $first_visit == 1 ? 'style="display: block;"' : '';
                                             $tabs .= '<div id="' . $tab_id . '_tab" class="awm_tablinks ' . $show . '" onclick="awm_open_tab(event,\' ' . $tab_id . '\')">' . $tab_intro['label'] . '</div>';
                                             $tab_contents .= '<div id="' . $tab_id . '_content_tab" class="awm_tabcontent" ' . $style . '>';
-
+                                            $tab_meta = array();
                                             foreach ($tab_intro['include'] as $key => $data) {
                                                 $inputname = $main_tab_id . '[' . $tab_id . '][' . $key . ']';
                                                 $data['attributes']['id'] = $main_tab_id . '_' . $tab_id . '_' . $key;
@@ -387,9 +419,9 @@ if (!function_exists('awm_show_content')) {
                                                     $data['attributes']['value'] = $val[$tab_id][$key];
                                                 }
                                                 $data['attributes']['exclude_meta'] = true;
-
-                                                $tab_contents .= awm_show_content(array($inputname => $data));
+                                                $tab_meta[$inputname] = $data;
                                             }
+                                            $tab_contents .= awm_show_content($tab_meta);
                                             $tab_contents .= '</div>';
                                         }
                                         $ins .= '<div class="awm-tab">' . $tabs . '</div>' . $tab_contents;
@@ -425,7 +457,7 @@ if (!function_exists('awm_show_content')) {
                                         $counter = !empty($val) ? count($val) : 1;
                                         for ($i = 0; $i < $counter; ++$i) {
                                             $ins .= '<div id="awm-' . $original_meta . '-' . $i . '" class="awm-repeater-content" data-counter="' . $i . '" draggable="true"><div class="awm-repeater-inputs">';
-
+                                            $new_metas = array();
                                             foreach ($a['include'] as $key => $data) {
                                                 $data['attributes'] = (isset($data['attributes']) ? $data['attributes'] : array()) + (isset($a['attributes']) ? $a['attributes'] : array());
                                                 $inputname = $original_meta . '[' . $i . '][' . $key . ']';
@@ -433,11 +465,11 @@ if (!function_exists('awm_show_content')) {
                                                     $data['attributes']['value'] = $val[$i][$key];
                                                 }
                                                 $data['attributes']['exclude_meta'] = true;
-
                                                 $data['attributes']['id'] = str_replace(']', '_', str_replace('[', '_', $original_meta)) . '_' . $i . '_' . $key;
                                                 $data['attributes']['input-name'] = $original_meta;
-                                                $ins .= awm_show_content(array($inputname => $data));
+                                                $new_metas[$inputname] = $data;
                                             }
+                                            $ins .= awm_show_content($new_metas);
                                             $item = isset($a['item_name']) ? $a['item_name'] : awm_Roww;
                                             $ins .= '</div><div class="awm-actions"><div class="awm-repeater-remove"><span class="awm_action awm-remove">' . awm_Remove . ' ' . $item . '</span></div><div class="awm-repeater-add"><span class="awm_action awm-add">' . awm_Add . ' ' . $item . '</span></div></div>';
 
@@ -463,6 +495,10 @@ if (!function_exists('awm_show_content')) {
                         $label_class[] = 'awm-meta-field';
                         $labelClass = implode(' ', $label_class);
                         $labelAttrs = implode(' ', $label_attrs);
+                        if (!$display_wrapper) {
+                            $msg[] = $ins;
+                            continue;
+                        }
                         switch ($view) {
                             case 'none':
                                 /*fronted view*/
@@ -493,14 +529,19 @@ if (!function_exists('awm_show_content')) {
                                 $msg[] = '</div>';
                                 break;
                         }
+                        if (!in_array('awm_no_show', $label_class)) {
+                            $meta_counter++;
+                        }
                     }
                 }
             }
         }
+
         $msg = apply_filters('awm_show_content_filter', $msg, $id, $arrs, $view, $target, $label, $specific, $sep);
+
         switch ($target) {
             case 'edit':
-                $msg = implode('', $msg);
+                $msg = '<div id="' . $awm_id . '" class="awm-show-content" count="' .  $meta_counter . '">' . implode('', $msg) . '</div>';
                 break;
             default:
                 break;
@@ -513,11 +554,10 @@ if (!function_exists('awm_show_content')) {
 function awm_save_custom_meta($data, $dataa, $id, $view = 'post', $postType = '')
 {
     if (isset($data) && !empty($data)) {
-        $arr = awm_custom_meta_update_vars($data, $dataa, $id, $view);
+        awm_custom_meta_update_vars($data, $dataa, $id, $view);
         /*check for translation */
         do_action('awm_custom_meta_update_action', $data, $dataa, $id, $view, $postType);
         awm_auto_translate($data, $dataa, $id, $view);
-        return $arr;
     }
 }
 
@@ -543,10 +583,12 @@ function awm_auto_translate($data, $dataa, $id, $view)
                             $original = $ids['original'];
                             unset($ids['original']);
                             $fields = apply_filters('awm_auto_translate_fields', $library_data, $library_key);
+                            $copy_metas = array();
                             foreach ($fields as $key => $data) {
                                 $meta = get_post_meta($original, $key, 'true') ?: '';
                                 foreach ($ids as $id) {
                                     if ($meta != '') {
+                                        $copy_meta['no_empty'][$key] = $meta;
                                         update_post_meta($id, $key, $meta);
                                     } else {
                                         delete_post_meta($id, $key);
@@ -565,6 +607,7 @@ function awm_auto_translate($data, $dataa, $id, $view)
 
 function awm_custom_meta_update_vars($meta, $metaa, $id, $view)
 {
+
     foreach ($meta as $k) {
         $chk = '';
 
@@ -591,6 +634,7 @@ function awm_custom_meta_update_vars($meta, $metaa, $id, $view)
             $val = isset($chk) ? $chk : '';
             $arr[$k] = $val;
         }
+
         switch ($view) {
             case 'user':
                 /*update user meta*/
@@ -618,7 +662,6 @@ function awm_custom_meta_update_vars($meta, $metaa, $id, $view)
                 break;
         }
     }
-
     return $arr;
 }
 
@@ -704,7 +747,9 @@ function awm_display_meta_value($meta, $data, $postId)
         case 'message':
         case 'html':
             $value = isset($data['value']) ? $data['value'] : '';
-
+            if (isset($data['strip'])) {
+                return $value;
+            }
             break;
         case 'function':
             if (isset($data['callback']) && function_exists($data['callback'])) {
@@ -728,77 +773,6 @@ function awm_display_meta_value($meta, $data, $postId)
 }
 
 
-function awm_admin_post_columns()
-{
-    global $pagenow;
-
-    switch ($pagenow) {
-            /*case 'edit-tags.php':
-        foreach ($posts as $p) {
-        if (isset($_GET['post_type']) && isset($_GET['taxonomy']) && $_GET['post_type'] == $postType && isset($p['tax_types']) && array_key_exists($_GET['taxonomy'], $p['tax_types'])) {
-        add_filter('manage_edit-'.$_GET['taxonomy'].'_columns', function ($columns) use ($p) {
-        $columns['fx_metrics'] = __('Total Views', 'filox-metrics');
-
-        return $columns;
-        }, 10, 1);
-        add_filter('manage_edit-'.$_GET['taxonomy'].'_sortable_columns', function ($columns) use ($p) {
-        $columns['fx_metrics'] = '_fm_views_total';
-
-        return $columns;
-        }, 10, 1);
-
-        add_action('manage_'.$_GET['taxonomy'].'_custom_column', function ($content, $column, $term_id) {
-        if ($column == 'fx_metrics') {
-        echo get_term_meta($term_id, '_fm_views_total', true) ?: 0;
-        }
-        }, 10, 3);
-        break;
-        }
-        }
-
-        break;*/
-        case 'edit.php':
-            $metaBoxes = apply_filters('awm_add_meta_boxes_filter', array());
-            if (!empty($metaBoxes)) {
-                foreach ($metaBoxes as $metaBoxKey => $metaBoxData) {
-                    if (isset($metaBoxData['library']) && !empty($metaBoxData['library'])) {
-                        foreach ($metaBoxData['library'] as $meta => $data) {
-                            if (isset($data['admin_list']) && $data['admin_list']) {
-                                $data['key'] = $meta;
-                                foreach ($metaBoxData['postTypes'] as $postType) {
-                                    if (isset($_GET['post_type']) && $_GET['post_type'] == $postType) {
-                                        add_filter('manage_' . $postType . '_posts_columns', function ($columns) use ($data) {
-                                            $columns[$data['key']] = $data['label'];
-                                            return $columns;
-                                        }, 10, 1);
-                                        /*add_filter('manage_edit-'.$postType.'_sortable_columns', function ($columns) use ($data) {
-                                        $columns['_fm_views_total'] = '_fm_views_total';
-                                        $columns['_fm_arch_impr_total'] = '_fm_arch_impr_total';
-                                        if (isset($p['sbp_book'])) {
-                                        $columns['_fm_form_impr_total'] = '_fm_form_impr_total';
-                                        }
-
-                                        return $columns;
-                                        }, 10, 1);*/
-
-                                        add_action('manage_' . $postType . '_posts_custom_column', function ($column) use ($data) {
-                                            global $post;
-                                            if ($data['key'] == $column) {
-                                                echo awm_display_meta_value($data['key'], $data, $post->ID);
-                                            }
-                                        }, 10, 1);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            break;
-        default:
-            break;
-    }
-}
 
 /**
  * this funciton is used to creat a form for the fields we add
@@ -842,3 +816,31 @@ function awm_create_form($options)
     return $content;
 }
 
+
+if (!function_exists('awm_callback_library')) {
+    /**
+     * return options library
+     * @param array $library the library either for the metas or the options
+     */
+    function awm_callback_library($library)
+    {
+        if (isset($library['library'])) {
+            return $library['library'];
+        }
+        if (isset($library['options']) && !empty($library['options'])) {
+            return $library['options'];
+        }
+
+        if (!isset($library['library'])) {
+            if (isset($library['callback'])) {
+                $callback_options = array();
+                if (!empty($library['callback_variables'])) {
+                    $callback_options = call_user_func_array($library['callback'], $library['callback_variables']);
+                }
+                $library = empty($callback_options) ? call_user_func($library['callback']) : $callback_options;
+                return $library;
+            }
+        }
+        return '';
+    }
+}

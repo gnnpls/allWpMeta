@@ -23,9 +23,7 @@ if (!function_exists('awmInputFields')) {
             'email' => array('label' => __('Email', 'all-wp-meta')),
             'checkbox' => array('label' => __('Checkbox', 'all-wp-meta')),
         ));
-
     }
-
 }
 
 /**
@@ -38,21 +36,19 @@ if (!function_exists('awmInputFields')) {
 if (!function_exists('awmPostFieldsForInput')) {
     function awmPostFieldsForInput($postType = '', $number = '-1', $args = array())
     {
-        $options = array();
-        if (!empty($postType))
-            {
-            if (!is_array($postType))
-            {
-                $postType=array($postType);
-            }    
-            foreach ($postType as $currentPostType)
-            {
+        $options = $defaultArgs = array();
+        if (!empty($postType)) {
+            if (!is_array($postType)) {
+                $postType = array($postType);
+            }
+            foreach ($postType as $currentPostType) {
                 $defaultArgs = array(
                     'post_type' => $currentPostType,
                     'numberposts' => $number,
                     'status' => 'publish',
                     'orderby' => 'title',
                     'order' => 'ASC',
+                    'supress_filters' => false
                 );
                 if (!empty($args)) {
                     foreach ($args as $argKey => $argValue) {
@@ -78,26 +74,24 @@ if (!function_exists('awmPostFieldsForInput')) {
  * @param int $number the number of posts to show
  * @param string $option_key which key to bring back to the option value
  * @param array $args array for the get_posts function
+ * @param string $awm_id the id of the library
  * 
  */
-if (!function_exists('awmTaxonomyFieldsForInput'))
-{
-    function awmTaxonomyFieldsForInput($taxonomy='',$number='-1',$option_key='term_id',$args=array())
+if (!function_exists('awmTaxonomyFieldsForInput')) {
+    function awmTaxonomyFieldsForInput($taxonomy = '', $number = '-1', $option_key = 'term_id', $args = array(), $awm_id = '')
     {
         $options = array();
         $defaultArgs = array(
             'taxonomy'      => $taxonomy, // taxonomy name
-            'orderby'       => 'id', 
+            'orderby'       => 'id',
             'order'         => 'ASC',
             'hide_empty'    => false,
             'fields'        => 'all',
-             'suppress_filter' => false,
+            'suppress_filter' => false,
         );
-        if (!empty($args))
-        {
-            foreach ($args as $argKey=>$argValue)
-            {
-                $defaultArgs[$argKey]=$argValue;
+        if (!empty($args)) {
+            foreach ($args as $argKey => $argValue) {
+                $defaultArgs[$argKey] = $argValue;
             }
         }
         $content = get_terms($defaultArgs);
@@ -106,7 +100,7 @@ if (!function_exists('awmTaxonomyFieldsForInput'))
                 $options[$data->{$option_key}] = array('label' => $data->name);
             }
         }
-        return apply_filters('awmTaxonomyFieldsForInput_filter', $options,$taxonomy,$number,$defaultArgs);
+        return apply_filters('awmTaxonomyFieldsForInput_filter', $options, $taxonomy, $number, $defaultArgs);
     }
 }
 
@@ -118,21 +112,18 @@ if (!function_exists('awmTaxonomyFieldsForInput'))
  * @param array $args array for the get_posts function
  * 
  */
-if (!function_exists('awmUserFieldsForInput'))
-{
-    function awmUserFieldsForInput($roles=array(),$number='-1',$args=array())
+if (!function_exists('awmUserFieldsForInput')) {
+    function awmUserFieldsForInput($roles = array(), $number = '-1', $args = array())
     {
         $options = array();
         $defaultArgs = array(
-        'role__in' => $roles,
-        'orderby' => 'display_name'
+            'role__in' => $roles,
+            'orderby' => 'display_name'
         );
-        
-        if (!empty($args))
-        {
-            foreach ($args as $argKey=>$argValue)
-            {
-                $defaultArgs[$argKey]=$argValue;
+
+        if (!empty($args)) {
+            foreach ($args as $argKey => $argValue) {
+                $defaultArgs[$argKey] = $argValue;
             }
         }
         $content = get_users($defaultArgs);
@@ -141,6 +132,6 @@ if (!function_exists('awmUserFieldsForInput'))
                 $options[$data->ID] = array('label' => $data->display_name);
             }
         }
-        return apply_filters('awmUserFieldsForInput_filter', $options,$roles,$number,$defaultArgs);
+        return apply_filters('awmUserFieldsForInput_filter', $options, $roles, $number, $defaultArgs);
     }
 }

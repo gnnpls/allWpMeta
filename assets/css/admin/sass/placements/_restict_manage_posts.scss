@@ -1,12 +1,19 @@
 #posts-filter .tablenav {
- .awm-meta-field {
-  margin: 0px 5px;
-  width: auto;
+ .awm-show-content {
   display: inline-block;
-  min-width:100px;
-  max-width:200px;
-  label {
-   display: none !important;
+  position: relative;
+  width: auto;
+
+  .awm-meta-field {
+   margin: 0px 5px;
+   width: auto;
+   display: inline-block;
+   min-width: 100px;
+   max-width: 200px;
+
+   label {
+    display: none !important;
+   }
   }
  }
 }
